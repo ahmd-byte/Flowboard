@@ -3,12 +3,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import BoardPage from './pages/BoardPage';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import useUserStore from './store/userStore';
 
 const PrivateRoute = ({ children }) => {
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
-  // For development demo purposes, let's allow access if token is present or just skip auth check if needed
-  // But strict implementation:
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
@@ -30,6 +30,22 @@ function App() {
         element={
           <PrivateRoute>
             <BoardPage />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/profile" 
+        element={
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <PrivateRoute>
+            <Settings />
           </PrivateRoute>
         } 
       />
