@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
 from functools import lru_cache
+import os
 
 
 class Settings(BaseSettings):
@@ -32,9 +33,18 @@ class Settings(BaseSettings):
     
     @property
     def database_url(self) -> str:
-        if self.DATABASE_URL:
-            return self.DATABASE_URL
-        return f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        # Get the cert path - use absolute path for TiDB SSL
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        cert_path = os.path.join(base_dir, "app", "cert", "isrgrootx1.pem")
+        
+        # Always build from individual settings for TiDB
+        url = f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        
+        # Add SSL for TiDB Serverless
+        if "tidbcloud.com" in self.DB_HOST:
+            url += f"?ssl_ca={cert_path}&ssl_verify_cert=true"
+        
+        return url
     
     @property
     def cors_origins_list(self) -> list[str]:
@@ -51,4 +61,3 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
-
