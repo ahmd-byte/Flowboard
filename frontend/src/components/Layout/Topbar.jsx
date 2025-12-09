@@ -66,11 +66,11 @@ const Topbar = () => {
 
   return (
     <>
-      <div className="h-16 bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-white flex items-center justify-between px-6 border-b border-neutral-800 dark:border-neutral-800 light:border-gray-200 ml-64">
-        <div className="flex items-center gap-3">
+      <div className="h-16 bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-white flex items-center justify-between px-4 lg:px-6 border-b border-neutral-800 dark:border-neutral-800 light:border-gray-200 lg:ml-64 fixed top-0 right-0 left-0 lg:left-64 z-30">
+        <div className="flex items-center gap-3 ml-12 lg:ml-0">
           <h1 className="font-bold text-white dark:text-white light:text-gray-900 text-lg">{getPageTitle()}</h1>
-          <div className="h-6 w-px bg-neutral-800 dark:bg-neutral-800 light:bg-gray-200" />
-          <span className="text-xs text-neutral-500 dark:text-neutral-500 light:text-gray-500">
+          <div className="hidden sm:block h-6 w-px bg-neutral-800 dark:bg-neutral-800 light:bg-gray-200" />
+          <span className="hidden sm:block text-xs text-neutral-500 dark:text-neutral-500 light:text-gray-500">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
           </span>
         </div>

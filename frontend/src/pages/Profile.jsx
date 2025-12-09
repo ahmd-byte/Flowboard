@@ -69,7 +69,7 @@ const Profile = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar />
-        <div className="p-8 ml-64 animate-fade-in">
+        <div className="p-4 sm:p-6 lg:p-8 lg:ml-64 animate-fade-in pt-20 lg:pt-8">
           <h1 className="text-2xl font-bold text-white mb-6">My Profile</h1>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

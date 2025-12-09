@@ -273,3 +273,4 @@ const CardModal = ({ card, isOpen, onClose, onUpdate, onDelete }) => {
 
 export default CardModal;
 
+

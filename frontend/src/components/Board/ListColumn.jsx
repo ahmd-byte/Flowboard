@@ -28,11 +28,11 @@ const ListColumn = ({ list, cards, index, onRefresh }) => {
         position: cards.length
       });
       
-      addCard({
+      addCard(String(data.list_id), {
         id: String(data.id),
-        list_id: String(data.list_id),
         title: data.title,
         description: data.description,
+        labels: data.labels || [],
         position: data.position,
         due_date: data.due_date
       });
@@ -86,7 +86,7 @@ const ListColumn = ({ list, cards, index, onRefresh }) => {
         <div
           {...provided.draggableProps}
           ref={provided.innerRef}
-          className={`w-72 flex-shrink-0 bg-neutral-900/90 backdrop-blur rounded-2xl flex flex-col max-h-[calc(100vh-200px)] mr-4 border border-neutral-800 transition-all duration-300 ${
+          className={`w-64 sm:w-72 flex-shrink-0 bg-neutral-900/90 backdrop-blur rounded-2xl flex flex-col max-h-[calc(100vh-200px)] mr-3 sm:mr-4 border border-neutral-800 transition-all duration-300 ${
             snapshot.isDragging ? 'shadow-2xl shadow-red-500/20 ring-2 ring-red-500' : ''
           }`}
         >

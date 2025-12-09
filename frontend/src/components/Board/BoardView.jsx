@@ -1,19 +1,90 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import toast from 'react-hot-toast';
 import useBoardStore from '../../store/boardStore';
+import useUserStore from '../../store/userStore';
 import ListColumn from './ListColumn';
 import MembersModal from './MembersModal';
+import OnlineUsers from './OnlineUsers';
+import LiveCursors from './LiveCursors';
+import useWebSocket from '../../hooks/useWebSocket';
 import { listApi, cardApi } from '../../api/services';
-import { Plus, X, Users, ArrowLeft } from 'lucide-react';
+import { exportAsJSON, exportAsPDF } from '../../utils/exportBoard';
+import { Plus, X, Users, ArrowLeft, Wifi, WifiOff, Download, FileJson, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const BoardView = ({ boardId, onRefresh }) => {
-  const { board, lists, listOrder, cards, moveCard, moveList, addList } = useBoardStore();
+  const { board, lists, listOrder, cards, moveCard, moveList, addList, addCard, updateCard, removeCard, removeList } = useBoardStore();
+  const { user } = useUserStore();
   const [showAddList, setShowAddList] = useState(false);
   const [newListTitle, setNewListTitle] = useState('');
   const [addingList, setAddingList] = useState(false);
   const [showMembers, setShowMembers] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
+  const boardRef = useRef(null);
+  
+  // WebSocket connection
+  const { isConnected, onlineUsers, cursors, sendCursorPosition, registerHandler } = useWebSocket(boardId);
+
+  // Handle real-time events from WebSocket
+  useEffect(() => {
+    const unsubscribeCardCreated = registerHandler('card_created', (card) => {
+      addCard(String(card.list_id), {
+        id: String(card.id),
+        title: card.title,
+        description: card.description,
+        labels: card.labels || [],
+        due_date: card.due_date
+      });
+    });
+
+    const unsubscribeCardUpdated = registerHandler('card_updated', (card) => {
+      updateCard(String(card.id), {
+        title: card.title,
+        description: card.description,
+        labels: card.labels || [],
+        due_date: card.due_date
+      });
+    });
+
+    const unsubscribeCardDeleted = registerHandler('card_deleted', (payload) => {
+      removeCard(payload.list_id, payload.card_id);
+    });
+
+    const unsubscribeCardMoved = registerHandler('card_moved', (payload) => {
+      moveCard(payload.source_list_id, payload.dest_list_id, 0, payload.position, payload.card_id);
+    });
+
+    const unsubscribeListCreated = registerHandler('list_created', (list) => {
+      addList({
+        id: String(list.id),
+        title: list.title,
+        position: list.position
+      });
+    });
+
+    const unsubscribeListDeleted = registerHandler('list_deleted', (payload) => {
+      removeList(payload.list_id);
+    });
+
+    return () => {
+      unsubscribeCardCreated();
+      unsubscribeCardUpdated();
+      unsubscribeCardDeleted();
+      unsubscribeCardMoved();
+      unsubscribeListCreated();
+      unsubscribeListDeleted();
+    };
+  }, [registerHandler, addCard, updateCard, removeCard, moveCard, addList, removeList]);
+
+  // Track cursor movement
+  const handleMouseMove = useCallback((e) => {
+    if (!boardRef.current) return;
+    const rect = boardRef.current.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+    sendCursorPosition(x, y);
+  }, [sendCursorPosition]);
 
   const onDragEnd = async (result) => {
     const { destination, source, draggableId, type } = result;
@@ -89,29 +160,86 @@ const BoardView = ({ boardId, onRefresh }) => {
   const bgClass = board?.background || 'bg-gradient-to-br from-red-600 to-black';
 
   return (
-    <div className={`h-full overflow-x-auto overflow-y-hidden ${bgClass}`}>
+    <div 
+      ref={boardRef}
+      onMouseMove={handleMouseMove}
+      className={`h-full overflow-x-auto overflow-y-hidden ${bgClass}`}
+    >
+      {/* Live Cursors */}
+      <LiveCursors cursors={cursors} />
+      
       {/* Board Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-black/30 backdrop-blur-sm border-b border-white/10">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-black/30 backdrop-blur-sm border-b border-white/10 gap-3">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Link 
             to="/"
-            className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+            className="flex items-center gap-1 sm:gap-2 text-white/70 hover:text-white transition-colors"
           >
             <ArrowLeft size={18} />
-            <span className="text-sm font-medium">Back</span>
+            <span className="text-sm font-medium hidden sm:inline">Back</span>
           </Link>
           <div className="h-6 w-px bg-white/20" />
-          <h1 className="text-xl font-bold text-white drop-shadow-lg">
+          <h1 className="text-base sm:text-xl font-bold text-white drop-shadow-lg truncate max-w-[150px] sm:max-w-none">
             {board?.title || 'Board'}
           </h1>
+          {/* Connection Status */}
+          <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${isConnected ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+            {isConnected ? <Wifi size={12} /> : <WifiOff size={12} />}
+            <span className="hidden sm:inline">{isConnected ? 'Live' : 'Offline'}</span>
+          </div>
         </div>
-        <button
-          onClick={() => setShowMembers(true)}
-          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 backdrop-blur-sm border border-white/20"
-        >
-          <Users size={16} />
-          Members
-        </button>
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* Online Users - hidden on very small screens */}
+          <div className="hidden sm:block">
+            <OnlineUsers users={onlineUsers} currentUserId={user?.id} />
+          </div>
+          
+          {/* Export Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 backdrop-blur-sm border border-white/20"
+            >
+              <Download size={16} />
+              <span className="hidden sm:inline">Export</span>
+            </button>
+            
+            {showExportMenu && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-neutral-900 rounded-xl border border-neutral-700 shadow-xl overflow-hidden z-30 animate-scale-in">
+                <button
+                  onClick={() => {
+                    exportAsJSON(board, lists, cards);
+                    setShowExportMenu(false);
+                    toast.success('Board exported as JSON!');
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors text-sm"
+                >
+                  <FileJson size={16} />
+                  Export as JSON
+                </button>
+                <button
+                  onClick={() => {
+                    exportAsPDF(board, lists, cards);
+                    setShowExportMenu(false);
+                    toast.success('Opening print preview...');
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-3 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors text-sm"
+                >
+                  <FileText size={16} />
+                  Export as PDF
+                </button>
+              </div>
+            )}
+          </div>
+          
+          <button
+            onClick={() => setShowMembers(true)}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 backdrop-blur-sm border border-white/20"
+          >
+            <Users size={16} />
+            <span className="hidden sm:inline">Members</span>
+          </button>
+        </div>
       </div>
 
       {/* Board Content */}
@@ -121,7 +249,7 @@ const BoardView = ({ boardId, onRefresh }) => {
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="flex h-[calc(100%-72px)] items-start p-6 pt-4"
+              className="flex h-[calc(100%-100px)] sm:h-[calc(100%-72px)] items-start p-3 sm:p-6 pt-4 overflow-x-auto"
             >
               {listOrder.map((listId, index) => {
                 const list = lists[listId];
@@ -141,7 +269,7 @@ const BoardView = ({ boardId, onRefresh }) => {
               {provided.placeholder}
               
               {/* Add List */}
-              <div className="w-72 flex-shrink-0">
+              <div className="w-64 sm:w-72 flex-shrink-0">
                 {showAddList ? (
                   <form onSubmit={handleAddList} className="bg-neutral-900/90 backdrop-blur rounded-2xl p-3 border border-neutral-800">
                     <input

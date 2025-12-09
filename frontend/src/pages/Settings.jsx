@@ -105,7 +105,7 @@ const Settings = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar />
-        <div className="p-8 ml-64 animate-fade-in">
+        <div className="p-4 sm:p-6 lg:p-8 lg:ml-64 animate-fade-in pt-20 lg:pt-8">
           <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
           
           <div className="max-w-3xl space-y-6">

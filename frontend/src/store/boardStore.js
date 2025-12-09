@@ -53,22 +53,67 @@ const useBoardStore = create((set) => ({
     listOrder: [...state.listOrder, list.id],
   })),
 
-  addCard: (card) => set((state) => {
-    const list = state.lists[card.list_id];
+  removeList: (listId) => set((state) => {
+    const newLists = { ...state.lists };
+    const newCards = { ...state.cards };
+    const list = newLists[listId];
+    
+    // Remove cards belonging to this list
+    if (list && list.cardIds) {
+      list.cardIds.forEach(cardId => {
+        delete newCards[cardId];
+      });
+    }
+    
+    delete newLists[listId];
+    
+    return {
+      lists: newLists,
+      cards: newCards,
+      listOrder: state.listOrder.filter(id => id !== listId),
+    };
+  }),
+
+  addCard: (listId, card) => set((state) => {
+    const list = state.lists[listId];
+    if (!list) return state;
+    
     return {
       cards: { ...state.cards, [card.id]: card },
       lists: {
         ...state.lists,
-        [card.list_id]: {
+        [listId]: {
           ...list,
-          cardIds: [...list.cardIds, card.id]
+          cardIds: [...(list.cardIds || []), card.id]
         }
       }
     };
   }),
 
-  updateCard: (card) => set((state) => ({
-    cards: { ...state.cards, [card.id]: card }
+  removeCard: (listId, cardId) => set((state) => {
+    const list = state.lists[listId];
+    if (!list) return state;
+    
+    const newCards = { ...state.cards };
+    delete newCards[cardId];
+    
+    return {
+      cards: newCards,
+      lists: {
+        ...state.lists,
+        [listId]: {
+          ...list,
+          cardIds: (list.cardIds || []).filter(id => id !== cardId)
+        }
+      }
+    };
+  }),
+
+  updateCard: (cardId, updates) => set((state) => ({
+    cards: { 
+      ...state.cards, 
+      [cardId]: { ...state.cards[cardId], ...updates } 
+    }
   })),
 }));
 

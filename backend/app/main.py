@@ -49,12 +49,23 @@ def health_check():
 
 
 @app.websocket("/ws/boards/{board_id}")
-async def websocket_endpoint(websocket: WebSocket, board_id: int):
-    await ws_manager.connect(websocket, board_id)
+async def websocket_endpoint(websocket: WebSocket, board_id: int, user_id: int = 0, user_name: str = "Guest"):
+    await ws_manager.connect(websocket, board_id, user_id, user_name)
     try:
         while True:
             data = await websocket.receive_text()
-            # Handle incoming messages if needed
-            # For now, just keep connection alive
+            import json
+            message = json.loads(data)
+            
+            # Handle cursor movement
+            if message.get("type") == "cursor_move":
+                payload = message.get("payload", {})
+                await ws_manager.update_cursor(
+                    board_id, 
+                    user_id, 
+                    payload.get("x", 0), 
+                    payload.get("y", 0)
+                )
     except WebSocketDisconnect:
-        ws_manager.disconnect(websocket, board_id)
+        ws_manager.disconnect(websocket, board_id, user_id)
+        await ws_manager.notify_user_left(board_id, user_id, user_name)

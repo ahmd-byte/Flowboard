@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import Sidebar from '../components/Layout/Sidebar';
 import Topbar from '../components/Layout/Topbar';
 import EmptyState from '../components/UI/EmptyState';
+import OnboardingTour from '../components/UI/OnboardingTour';
 import { BoardSkeleton, StatsSkeleton } from '../components/UI/Skeletons';
 import { boardApi, statsApi } from '../api/services';
 import { Plus, X, LayoutDashboard, CheckSquare, Users, TrendingUp, Sparkles, Trash2, MoreVertical } from 'lucide-react';
@@ -152,7 +153,7 @@ const Dashboard = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar />
-        <div className="p-8 ml-64 animate-fade-in">
+        <div className="p-4 sm:p-6 lg:p-8 lg:ml-64 animate-fade-in pt-16 lg:pt-8">
           {/* Welcome Section */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-1">
@@ -191,14 +192,14 @@ const Dashboard = () => {
           )}
           
           {/* Boards Section */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
               <h2 className="text-xl font-bold text-white">Your Boards</h2>
               <p className="text-sm text-neutral-500">Manage and organize your projects</p>
             </div>
             <button 
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-red-600/20 hover:shadow-red-600/40"
+              className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-red-600/20 hover:shadow-red-600/40 w-full sm:w-auto"
             >
               <Plus size={18} />
               New Board
@@ -289,6 +290,9 @@ const Dashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Onboarding Tour */}
+      <OnboardingTour />
 
       {/* Create Board Modal */}
       {showModal && (
