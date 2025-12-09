@@ -25,7 +25,11 @@ const Register = () => {
       navigate('/login');
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.detail || 'Registration failed');
+      const detail = err.response?.data?.detail;
+      const message = typeof detail === 'string' ? detail : 
+                      Array.isArray(detail) ? detail[0]?.msg || 'Invalid input' : 
+                      'Registration failed';
+      toast.error(message);
     } finally {
       setLoading(false);
     }

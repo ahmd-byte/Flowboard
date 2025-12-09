@@ -17,12 +17,12 @@ const Login = () => {
     setLoading(true);
     
     try {
-      const formData = new FormData();
-      formData.append('username', email);
-      formData.append('password', password);
+      const params = new URLSearchParams();
+      params.append('username', email);
+      params.append('password', password);
 
-      const { data } = await api.post('/auth/login', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const { data } = await api.post('/auth/login', params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
       
       const token = data.access_token;
@@ -36,7 +36,11 @@ const Login = () => {
       navigate('/');
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.detail || 'Invalid email or password');
+      const detail = err.response?.data?.detail;
+      const message = typeof detail === 'string' ? detail : 
+                      Array.isArray(detail) ? detail[0]?.msg || 'Invalid input' : 
+                      'Invalid email or password';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
