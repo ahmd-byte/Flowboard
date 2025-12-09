@@ -12,7 +12,6 @@ class List(Base):
     position = Column(Integer, default=0)
     created_at = Column(DateTime, server_default=func.now())
     
-    # Relationships
+    # Relationships with cascade delete
     board = relationship("Board", back_populates="lists")
-    cards = relationship("Card", back_populates="list", order_by="Card.position")
-
+    cards = relationship("Card", back_populates="list", order_by="Card.position", cascade="all, delete-orphan")

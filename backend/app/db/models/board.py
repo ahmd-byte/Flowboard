@@ -12,10 +12,9 @@ class Board(Base):
     background = Column(String(255), default="bg-gradient-to-br from-blue-500 to-indigo-600")
     created_at = Column(DateTime, server_default=func.now())
     
-    # Relationships
+    # Relationships with cascade delete
     workspace = relationship("Workspace", back_populates="boards")
-    lists = relationship("List", back_populates="board", order_by="List.position")
-    roles = relationship("Role", back_populates="board")
-    activities = relationship("Activity", back_populates="board")
-    automations = relationship("Automation", back_populates="board")
-
+    lists = relationship("List", back_populates="board", order_by="List.position", cascade="all, delete-orphan")
+    roles = relationship("Role", back_populates="board", cascade="all, delete-orphan")
+    activities = relationship("Activity", back_populates="board", cascade="all, delete-orphan")
+    automations = relationship("Automation", back_populates="board", cascade="all, delete-orphan")
