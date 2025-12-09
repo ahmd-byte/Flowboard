@@ -5,8 +5,8 @@ import Sidebar from '../components/Layout/Sidebar';
 import Topbar from '../components/Layout/Topbar';
 import EmptyState from '../components/UI/EmptyState';
 import { BoardSkeleton, StatsSkeleton } from '../components/UI/Skeletons';
-import { boardApi } from '../api/services';
-import { Plus, X, LayoutDashboard, CheckSquare, Users, TrendingUp, Sparkles } from 'lucide-react';
+import { boardApi, statsApi } from '../api/services';
+import { Plus, X, LayoutDashboard, CheckSquare, Users, TrendingUp, Sparkles, Activity } from 'lucide-react';
 
 const BACKGROUNDS = [
   'bg-gradient-to-br from-red-600 to-red-900',
@@ -24,9 +24,18 @@ const Dashboard = () => {
   const [newBoardTitle, setNewBoardTitle] = useState('');
   const [selectedBg, setSelectedBg] = useState(BACKGROUNDS[0]);
   const [creating, setCreating] = useState(false);
+  const [dashboardStats, setDashboardStats] = useState({
+    total_boards: 0,
+    total_cards: 0,
+    completed_cards: 0,
+    total_members: 0,
+    cards_this_week: 0,
+    completion_rate: 0
+  });
 
   useEffect(() => {
     fetchBoards();
+    fetchStats();
   }, []);
 
   const fetchBoards = async () => {
@@ -38,6 +47,15 @@ const Dashboard = () => {
       toast.error('Failed to load boards');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const { data } = await statsApi.getDashboard();
+      setDashboardStats(data);
+    } catch (err) {
+      console.error('Failed to fetch stats:', err);
     }
   };
 
@@ -63,39 +81,39 @@ const Dashboard = () => {
     }
   };
 
-  // Stats data
+  // Stats data from API
   const stats = [
     { 
       label: 'Total Boards', 
-      value: boards.length, 
+      value: dashboardStats.total_boards, 
       icon: LayoutDashboard, 
       color: 'text-red-500',
       bg: 'bg-red-500/10',
-      change: '+2 this week'
+      change: `${boards.length} active`
     },
     { 
-      label: 'Active Tasks', 
-      value: boards.length * 12, 
+      label: 'Total Tasks', 
+      value: dashboardStats.total_cards, 
       icon: CheckSquare, 
       color: 'text-emerald-500',
       bg: 'bg-emerald-500/10',
-      change: '24 completed'
+      change: `${dashboardStats.completed_cards} completed`
     },
     { 
       label: 'Team Members', 
-      value: 5, 
+      value: dashboardStats.total_members, 
       icon: Users, 
       color: 'text-blue-500',
       bg: 'bg-blue-500/10',
-      change: '3 online'
+      change: 'collaborators'
     },
     { 
-      label: 'Productivity', 
-      value: '87%', 
+      label: 'Completion Rate', 
+      value: `${dashboardStats.completion_rate}%`, 
       icon: TrendingUp, 
       color: 'text-amber-500',
       bg: 'bg-amber-500/10',
-      change: '+12% this month'
+      change: `+${dashboardStats.cards_this_week} this week`
     },
   ];
 

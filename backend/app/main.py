@@ -1,7 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.v1 import auth, users, boards, lists, cards, comments, roles, automations
+from app.api.v1 import auth, users, boards, lists, cards, comments, roles, automations, stats
 from app.services.websocket_manager import ws_manager
 
 app = FastAPI(
@@ -35,6 +35,7 @@ app.include_router(cards.router, prefix="/api/v1")
 app.include_router(comments.router, prefix="/api/v1")
 app.include_router(roles.router, prefix="/api/v1")
 app.include_router(automations.router, prefix="/api/v1")
+app.include_router(stats.router, prefix="/api/v1")
 
 
 @app.get("/")

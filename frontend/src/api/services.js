@@ -45,11 +45,17 @@ export const authApi = {
   me: () => api.get('/auth/me'),
 };
 
+// Stats API
+export const statsApi = {
+  getDashboard: () => api.get('/stats/dashboard'),
+};
+
 export default {
   board: boardApi,
   list: listApi,
   card: cardApi,
   comment: commentApi,
   auth: authApi,
+  stats: statsApi,
 };
 
