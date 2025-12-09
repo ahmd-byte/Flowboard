@@ -5,10 +5,10 @@ import Dashboard from './pages/Dashboard';
 import BoardPage from './pages/BoardPage';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
-import useUserStore from './store/userStore';
+import useUserStore, { selectIsAuthenticated } from './store/userStore';
 
 const PrivateRoute = ({ children }) => {
-  const isAuthenticated = useUserStore(state => state.isAuthenticated);
+  const isAuthenticated = useUserStore(selectIsAuthenticated);
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 

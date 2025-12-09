@@ -6,13 +6,12 @@ const useUserStore = create(
     (set) => ({
       user: null,
       token: null,
-      isAuthenticated: false,
       
       setUser: (user) => set({ user }),
-      setToken: (token) => set({ token, isAuthenticated: !!token }),
+      setToken: (token) => set({ token }),
       
-      login: (user, token) => set({ user, token, isAuthenticated: true }),
-      logout: () => set({ user: null, token: null, isAuthenticated: false }),
+      login: (user, token) => set({ user, token }),
+      logout: () => set({ user: null, token: null }),
     }),
     {
       name: 'flowboard-user-storage',
@@ -21,5 +20,7 @@ const useUserStore = create(
   )
 );
 
-export default useUserStore;
+// Selector for isAuthenticated - derives from token
+export const selectIsAuthenticated = (state) => !!state.token;
 
+export default useUserStore;
