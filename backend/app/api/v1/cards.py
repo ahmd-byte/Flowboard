@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List as PyList
 from app.db.session import get_db
 from app.db.models import User, Card, List, Role, RoleType
 from app.schemas.card import CardCreate, CardUpdate, CardMove, CardResponse
 from app.core.jwt import get_current_user
+from app.tasks.notifications import notify_card_created_sync, notify_card_moved_sync
 
 router = APIRouter(prefix="/cards", tags=["Cards"])
 
@@ -45,6 +46,7 @@ def get_cards(
 @router.post("/", response_model=CardResponse, status_code=status.HTTP_201_CREATED)
 def create_card(
     card_data: CardCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -58,6 +60,10 @@ def create_card(
     db.add(card)
     db.commit()
     db.refresh(card)
+    
+    # Send notification to board members (async)
+    background_tasks.add_task(notify_card_created_sync, card.id, current_user.id)
+    
     return card
 
 
@@ -100,6 +106,7 @@ def update_card(
 def move_card(
     card_id: int,
     move_data: CardMove,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
@@ -116,6 +123,9 @@ def move_card(
     old_position = card.position
     new_list_id = move_data.list_id
     new_position = move_data.position
+    
+    # Only notify if moving to different list
+    list_changed = old_list_id != new_list_id
     
     # Remove from old position
     db.query(Card).filter(
@@ -134,6 +144,17 @@ def move_card(
     
     db.commit()
     db.refresh(card)
+    
+    # Send notification only if moved to different list (async)
+    if list_changed:
+        background_tasks.add_task(
+            notify_card_moved_sync, 
+            card.id, 
+            old_list_id, 
+            new_list_id, 
+            current_user.id
+        )
+    
     return card
 
 
@@ -151,4 +172,3 @@ def delete_card(
     
     db.delete(card)
     db.commit()
-

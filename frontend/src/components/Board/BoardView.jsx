@@ -3,14 +3,16 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import toast from 'react-hot-toast';
 import useBoardStore from '../../store/boardStore';
 import ListColumn from './ListColumn';
+import MembersModal from './MembersModal';
 import { listApi, cardApi } from '../../api/services';
-import { Plus, X, Loader } from 'lucide-react';
+import { Plus, X, Loader, Users } from 'lucide-react';
 
 const BoardView = ({ boardId, onRefresh }) => {
   const { board, lists, listOrder, cards, moveCard, moveList, addList } = useBoardStore();
   const [showAddList, setShowAddList] = useState(false);
   const [newListTitle, setNewListTitle] = useState('');
   const [addingList, setAddingList] = useState(false);
+  const [showMembers, setShowMembers] = useState(false);
 
   const onDragEnd = async (result) => {
     const { destination, source, draggableId, type } = result;
@@ -92,6 +94,20 @@ const BoardView = ({ boardId, onRefresh }) => {
 
   return (
     <div className={`h-full overflow-x-auto overflow-y-hidden ${bgClass}`}>
+      {/* Board Header with Members Button */}
+      <div className="flex items-center justify-between px-6 py-3">
+        <h1 className="text-xl font-bold text-white drop-shadow-md">
+          {board?.title || 'Board'}
+        </h1>
+        <button
+          onClick={() => setShowMembers(true)}
+          className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
+        >
+          <Users size={16} />
+          Members
+        </button>
+      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="all-lists" direction="horizontal" type="list">
           {(provided) => (
@@ -159,8 +175,16 @@ const BoardView = ({ boardId, onRefresh }) => {
               </div>
             </div>
           )}
-        </Droppable>
+          </Droppable>
       </DragDropContext>
+
+      {/* Members Modal */}
+      <MembersModal
+        boardId={boardId}
+        boardTitle={board?.title || 'Board'}
+        isOpen={showMembers}
+        onClose={() => setShowMembers(false)}
+      />
     </div>
   );
 };
