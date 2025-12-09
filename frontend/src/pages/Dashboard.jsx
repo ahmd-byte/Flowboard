@@ -3,16 +3,18 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Sidebar from '../components/Layout/Sidebar';
 import Topbar from '../components/Layout/Topbar';
+import EmptyState from '../components/UI/EmptyState';
+import { BoardSkeleton, StatsSkeleton } from '../components/UI/Skeletons';
 import { boardApi } from '../api/services';
-import { Plus, Loader, X } from 'lucide-react';
+import { Plus, X, LayoutDashboard, CheckSquare, Users, TrendingUp, Sparkles } from 'lucide-react';
 
 const BACKGROUNDS = [
-  'bg-gradient-to-br from-purple-500 to-indigo-600',
-  'bg-gradient-to-br from-pink-500 to-rose-600',
-  'bg-gradient-to-br from-emerald-500 to-teal-600',
-  'bg-gradient-to-br from-orange-500 to-amber-600',
-  'bg-gradient-to-br from-blue-500 to-cyan-600',
-  'bg-gradient-to-br from-red-500 to-pink-600',
+  'bg-gradient-to-br from-red-600 to-red-900',
+  'bg-gradient-to-br from-neutral-800 to-neutral-900',
+  'bg-gradient-to-br from-red-700 to-black',
+  'bg-gradient-to-br from-zinc-700 to-zinc-900',
+  'bg-gradient-to-br from-red-800 to-neutral-900',
+  'bg-gradient-to-br from-stone-700 to-stone-900',
 ];
 
 const Dashboard = () => {
@@ -61,35 +63,141 @@ const Dashboard = () => {
     }
   };
 
+  // Stats data
+  const stats = [
+    { 
+      label: 'Total Boards', 
+      value: boards.length, 
+      icon: LayoutDashboard, 
+      color: 'text-red-500',
+      bg: 'bg-red-500/10',
+      change: '+2 this week'
+    },
+    { 
+      label: 'Active Tasks', 
+      value: boards.length * 12, 
+      icon: CheckSquare, 
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10',
+      change: '24 completed'
+    },
+    { 
+      label: 'Team Members', 
+      value: 5, 
+      icon: Users, 
+      color: 'text-blue-500',
+      bg: 'bg-blue-500/10',
+      change: '3 online'
+    },
+    { 
+      label: 'Productivity', 
+      value: '87%', 
+      icon: TrendingUp, 
+      color: 'text-amber-500',
+      bg: 'bg-amber-500/10',
+      change: '+12% this month'
+    },
+  ];
+
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-[#0a0a0a]">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar />
-        <div className="p-8 ml-64">
-          <h1 className="text-2xl font-bold text-gray-800 mb-6">Your Boards</h1>
+        <div className="p-8 ml-64 animate-fade-in">
+          {/* Welcome Section */}
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles size={20} className="text-red-500" />
+              <span className="text-red-500 font-medium text-sm">Dashboard</span>
+            </div>
+            <h1 className="text-3xl font-bold text-white mb-2">Welcome back! 👋</h1>
+            <p className="text-neutral-500">Here's what's happening with your projects today.</p>
+          </div>
+          
+          {/* Stats Grid */}
+          {loading ? (
+            <StatsSkeleton />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 stagger-children">
+              {stats.map((stat, i) => (
+                <div 
+                  key={i}
+                  className="bg-neutral-900 rounded-2xl p-5 border border-neutral-800 hover:border-neutral-700 transition-all duration-300 animate-slide-up group"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className={`p-2.5 rounded-xl ${stat.bg}`}>
+                      <stat.icon size={20} className={stat.color} />
+                    </div>
+                    <span className="text-[10px] text-neutral-500 bg-neutral-800 px-2 py-1 rounded-full">
+                      {stat.change}
+                    </span>
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1 group-hover:text-red-500 transition-colors">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-neutral-500">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Boards Section */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-white">Your Boards</h2>
+              <p className="text-sm text-neutral-500">Manage and organize your projects</p>
+            </div>
+            <button 
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-lg shadow-red-600/20 hover:shadow-red-600/40"
+            >
+              <Plus size={18} />
+              New Board
+            </button>
+          </div>
           
           {loading ? (
-            <div className="flex items-center justify-center h-64">
-              <Loader className="animate-spin text-blue-500" size={32} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children">
+              {[...Array(4)].map((_, i) => <BoardSkeleton key={i} />)}
             </div>
+          ) : boards.length === 0 ? (
+            <EmptyState
+              type="boards"
+              title="No boards yet"
+              description="Create your first board to start organizing your projects and tasks."
+              actionLabel="Create Board"
+              onAction={() => setShowModal(true)}
+            />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {boards.map(board => (
-                <Link to={`/board/${board.id}`} key={board.id} className="block group">
-                  <div className={`h-32 rounded-xl p-4 shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1 ${board.background} relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                    <h3 className="text-white font-bold text-lg relative z-10">{board.title}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children">
+              {boards.map((board, i) => (
+                <Link 
+                  to={`/board/${board.id}`} 
+                  key={board.id} 
+                  className="block group animate-slide-up"
+                  style={{ animationDelay: `${i * 50}ms` }}
+                >
+                  <div className={`h-36 rounded-2xl p-5 shadow-lg transition-all duration-300 ${board.background} relative overflow-hidden card-hover border border-white/10`}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute top-3 right-3 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    <div className="relative z-10 h-full flex flex-col justify-end">
+                      <h3 className="text-white font-bold text-lg mb-1 group-hover:text-red-300 transition-colors">
+                        {board.title}
+                      </h3>
+                      <p className="text-white/60 text-xs">Click to open board</p>
+                    </div>
                   </div>
                 </Link>
               ))}
               
+              {/* Add Board Card */}
               <button 
                 onClick={() => setShowModal(true)}
-                className="h-32 bg-gray-100 rounded-xl p-4 border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center text-gray-500 hover:text-blue-600 group"
+                className="h-36 bg-neutral-900 rounded-2xl p-5 border-2 border-dashed border-neutral-700 hover:border-red-500/50 hover:bg-neutral-800/50 transition-all duration-300 flex flex-col items-center justify-center text-neutral-500 hover:text-red-500 group"
               >
-                <div className="p-2 bg-white rounded-full shadow-sm group-hover:shadow-md mb-2 transition-shadow">
-                  <Plus size={20} />
+                <div className="p-3 bg-neutral-800 rounded-xl group-hover:bg-red-500/20 mb-2 transition-all duration-300">
+                  <Plus size={24} />
                 </div>
                 <span className="font-medium text-sm">Create new board</span>
               </button>
@@ -100,37 +208,44 @@ const Dashboard = () => {
 
       {/* Create Board Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800">Create Board</h2>
-              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-neutral-900 rounded-2xl p-6 w-full max-w-md shadow-2xl border border-neutral-800 animate-scale-in">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-white">Create New Board</h2>
+              <button 
+                onClick={() => setShowModal(false)} 
+                className="text-neutral-500 hover:text-white hover:bg-neutral-800 p-2 rounded-lg transition-colors"
+              >
                 <X size={20} />
               </button>
             </div>
             
             <form onSubmit={handleCreateBoard}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Board Title</label>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-neutral-400 mb-2">Board Title</label>
                 <input
                   type="text"
                   value={newBoardTitle}
                   onChange={(e) => setNewBoardTitle(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                   placeholder="Enter board title..."
                   autoFocus
                 />
               </div>
               
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Background</label>
+                <label className="block text-sm font-medium text-neutral-400 mb-3">Background</label>
                 <div className="grid grid-cols-6 gap-2">
                   {BACKGROUNDS.map((bg, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => setSelectedBg(bg)}
-                      className={`h-10 rounded-lg ${bg} ${selectedBg === bg ? 'ring-2 ring-offset-2 ring-blue-500' : ''}`}
+                      className={`h-10 rounded-xl ${bg} transition-all duration-200 ${
+                        selectedBg === bg 
+                          ? 'ring-2 ring-offset-2 ring-offset-neutral-900 ring-red-500 scale-110' 
+                          : 'hover:scale-105'
+                      }`}
                     />
                   ))}
                 </div>
@@ -139,10 +254,16 @@ const Dashboard = () => {
               <button
                 type="submit"
                 disabled={creating || !newBoardTitle.trim()}
-                className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full bg-red-600 hover:bg-red-700 text-white p-3.5 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-red-600/30 hover:shadow-red-600/50"
               >
-                {creating ? <Loader className="animate-spin" size={18} /> : null}
-                Create Board
+                {creating ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Plus size={18} />
+                    Create Board
+                  </>
+                )}
               </button>
             </form>
           </div>

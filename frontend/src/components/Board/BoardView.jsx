@@ -5,7 +5,8 @@ import useBoardStore from '../../store/boardStore';
 import ListColumn from './ListColumn';
 import MembersModal from './MembersModal';
 import { listApi, cardApi } from '../../api/services';
-import { Plus, X, Loader, Users } from 'lucide-react';
+import { Plus, X, Users, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const BoardView = ({ boardId, onRefresh }) => {
   const { board, lists, listOrder, cards, moveCard, moveList, addList } = useBoardStore();
@@ -27,28 +28,23 @@ const BoardView = ({ boardId, onRefresh }) => {
     }
 
     if (type === 'list') {
-      // Optimistic update
       moveList(source.index, destination.index);
       
-      // Persist to backend
       try {
         await listApi.updatePosition(draggableId, destination.index);
       } catch (err) {
         console.error('Failed to update list position:', err);
         toast.error('Failed to save list position');
-        onRefresh?.(); // Revert on error
+        onRefresh?.();
       }
       return;
     }
 
-    // Card drag
     const sourceListId = source.droppableId;
     const destListId = destination.droppableId;
     
-    // Optimistic update
     moveCard(sourceListId, destListId, source.index, destination.index, draggableId);
     
-    // Persist to backend
     try {
       await cardApi.move(draggableId, {
         list_id: parseInt(destListId),
@@ -57,7 +53,7 @@ const BoardView = ({ boardId, onRefresh }) => {
     } catch (err) {
       console.error('Failed to move card:', err);
       toast.error('Failed to save card position');
-      onRefresh?.(); // Revert on error
+      onRefresh?.();
     }
   };
 
@@ -90,31 +86,42 @@ const BoardView = ({ boardId, onRefresh }) => {
     }
   };
 
-  const bgClass = board?.background || 'bg-gradient-to-br from-blue-500 to-indigo-600';
+  const bgClass = board?.background || 'bg-gradient-to-br from-red-600 to-black';
 
   return (
     <div className={`h-full overflow-x-auto overflow-y-hidden ${bgClass}`}>
-      {/* Board Header with Members Button */}
-      <div className="flex items-center justify-between px-6 py-3">
-        <h1 className="text-xl font-bold text-white drop-shadow-md">
-          {board?.title || 'Board'}
-        </h1>
+      {/* Board Header */}
+      <div className="flex items-center justify-between px-6 py-4 bg-black/30 backdrop-blur-sm border-b border-white/10">
+        <div className="flex items-center gap-4">
+          <Link 
+            to="/"
+            className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+          >
+            <ArrowLeft size={18} />
+            <span className="text-sm font-medium">Back</span>
+          </Link>
+          <div className="h-6 w-px bg-white/20" />
+          <h1 className="text-xl font-bold text-white drop-shadow-lg">
+            {board?.title || 'Board'}
+          </h1>
+        </div>
         <button
           onClick={() => setShowMembers(true)}
-          className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
+          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 backdrop-blur-sm border border-white/20"
         >
           <Users size={16} />
           Members
         </button>
       </div>
 
+      {/* Board Content */}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="all-lists" direction="horizontal" type="list">
           {(provided) => (
             <div
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="flex h-full items-start p-6"
+              className="flex h-[calc(100%-72px)] items-start p-6 pt-4"
             >
               {listOrder.map((listId, index) => {
                 const list = lists[listId];
@@ -134,30 +141,37 @@ const BoardView = ({ boardId, onRefresh }) => {
               })}
               {provided.placeholder}
               
+              {/* Add List */}
               <div className="w-72 flex-shrink-0">
                 {showAddList ? (
-                  <form onSubmit={handleAddList} className="bg-gray-100 rounded-xl p-3">
+                  <form onSubmit={handleAddList} className="bg-neutral-900/90 backdrop-blur rounded-2xl p-3 border border-neutral-800">
                     <input
                       type="text"
                       value={newListTitle}
                       onChange={(e) => setNewListTitle(e.target.value)}
                       placeholder="Enter list title..."
-                      className="w-full p-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-2"
+                      className="w-full p-2.5 rounded-xl bg-neutral-800 border border-neutral-700 text-white placeholder-neutral-500 focus:ring-2 focus:ring-red-500 focus:border-transparent mb-2"
                       autoFocus
                     />
                     <div className="flex gap-2">
                       <button
                         type="submit"
                         disabled={addingList}
-                        className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center gap-1"
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-50 flex items-center gap-1 shadow-lg shadow-red-600/20"
                       >
-                        {addingList && <Loader className="animate-spin" size={14} />}
-                        Add List
+                        {addingList ? (
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Plus size={14} />
+                            Add List
+                          </>
+                        )}
                       </button>
                       <button
                         type="button"
                         onClick={() => { setShowAddList(false); setNewListTitle(''); }}
-                        className="text-gray-500 hover:text-gray-700 p-1.5"
+                        className="text-neutral-400 hover:text-white p-2 hover:bg-neutral-800 rounded-xl transition-colors"
                       >
                         <X size={18} />
                       </button>
@@ -166,16 +180,16 @@ const BoardView = ({ boardId, onRefresh }) => {
                 ) : (
                   <button 
                     onClick={() => setShowAddList(true)}
-                    className="w-full bg-white/20 hover:bg-white/30 text-white p-3 rounded-xl flex items-center gap-2 transition-colors backdrop-blur-sm"
+                    className="w-full bg-white/10 hover:bg-white/20 text-white p-3.5 rounded-2xl flex items-center gap-2 transition-all duration-300 backdrop-blur-sm border border-white/20 group"
                   >
-                    <Plus size={20} />
-                    <span>Add another list</span>
+                    <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+                    <span className="font-medium">Add another list</span>
                   </button>
                 )}
               </div>
             </div>
           )}
-          </Droppable>
+        </Droppable>
       </DragDropContext>
 
       {/* Members Modal */}

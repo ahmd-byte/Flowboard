@@ -1,1 +1,156 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== BLACK & RED THEME ===== */
+:root {
+  --color-primary: #dc2626;
+  --color-primary-dark: #b91c1c;
+  --color-primary-light: #ef4444;
+  --color-bg-dark: #0a0a0a;
+  --color-bg-card: #141414;
+  --color-bg-hover: #1f1f1f;
+  --color-border: #262626;
+  --color-text: #f5f5f5;
+  --color-text-muted: #a3a3a3;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+  50% { box-shadow: 0 0 20px 5px rgba(220, 38, 38, 0.2); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+.animate-slide-up { animation: slideUp 0.4s ease-out; }
+.animate-slide-down { animation: slideDown 0.3s ease-out; }
+.animate-scale-in { animation: scaleIn 0.2s ease-out; }
+.animate-pulse-glow { animation: pulse-glow 2s infinite; }
+
+/* Stagger children animations */
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+
+/* ===== SKELETON LOADING ===== */
+.skeleton {
+  background: linear-gradient(90deg, #1f1f1f 25%, #2a2a2a 50%, #1f1f1f 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* ===== GLOBAL STYLES ===== */
+body {
+  @apply bg-[#0a0a0a] text-gray-100;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Smooth page transitions */
+.page-transition {
+  @apply animate-fade-in;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 ease-out;
+}
+
+.card-hover:hover {
+  @apply transform -translate-y-1 shadow-xl;
+  box-shadow: 0 10px 40px -10px rgba(220, 38, 38, 0.3);
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(20, 20, 20, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Red glow effect */
+.glow-red {
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+}
+
+/* Button styles */
+.btn-primary {
+  @apply bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+}
+
+.btn-secondary {
+  @apply bg-neutral-800 hover:bg-neutral-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 border border-neutral-700;
+}
+
+/* Input styles */
+.input-dark {
+  @apply bg-neutral-900 border border-neutral-700 text-white rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200;
+}
+
+.input-dark::placeholder {
+  @apply text-neutral-500;
+}
+
+/* Label/Tag colors */
+.label-red { @apply bg-red-500/20 text-red-400 border-red-500/30; }
+.label-orange { @apply bg-orange-500/20 text-orange-400 border-orange-500/30; }
+.label-yellow { @apply bg-yellow-500/20 text-yellow-400 border-yellow-500/30; }
+.label-green { @apply bg-emerald-500/20 text-emerald-400 border-emerald-500/30; }
+.label-blue { @apply bg-blue-500/20 text-blue-400 border-blue-500/30; }
+.label-purple { @apply bg-purple-500/20 text-purple-400 border-purple-500/30; }
+.label-pink { @apply bg-pink-500/20 text-pink-400 border-pink-500/30; }
+.label-gray { @apply bg-neutral-500/20 text-neutral-400 border-neutral-500/30; }
