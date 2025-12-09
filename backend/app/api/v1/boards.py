@@ -150,7 +150,8 @@ def get_board_full(
                 "title": card.title,
                 "description": card.description,
                 "position": card.position,
-                "due_date": card.due_date.isoformat() if card.due_date else None
+                "due_date": card.due_date.isoformat() if card.due_date else None,
+                "labels": card.labels
             }
         
         lists_data.append({

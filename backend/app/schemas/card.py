@@ -8,6 +8,7 @@ class CardBase(BaseModel):
     description: Optional[str] = None
     position: Optional[int] = 0
     due_date: Optional[datetime] = None
+    labels: Optional[str] = None  # JSON string of label IDs
 
 
 class CardCreate(CardBase):
@@ -19,6 +20,7 @@ class CardUpdate(BaseModel):
     description: Optional[str] = None
     position: Optional[int] = None
     due_date: Optional[datetime] = None
+    labels: Optional[str] = None
     list_id: Optional[int] = None  # For moving cards
 
 
@@ -34,4 +36,3 @@ class CardResponse(CardBase):
     
     class Config:
         from_attributes = True
-
