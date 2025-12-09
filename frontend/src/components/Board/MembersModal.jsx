@@ -11,10 +11,10 @@ const ROLE_ICONS = {
 };
 
 const ROLE_COLORS = {
-  owner: 'text-yellow-500',
-  admin: 'text-purple-500',
-  editor: 'text-blue-500',
-  viewer: 'text-gray-500'
+  owner: 'text-amber-500 bg-amber-500/10',
+  admin: 'text-red-500 bg-red-500/10',
+  editor: 'text-emerald-500 bg-emerald-500/10',
+  viewer: 'text-neutral-400 bg-neutral-500/10'
 };
 
 const MembersModal = ({ boardId, boardTitle, isOpen, onClose }) => {
@@ -80,39 +80,46 @@ const MembersModal = ({ boardId, boardTitle, isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+      <div className="bg-neutral-900 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden border border-neutral-800 animate-scale-in">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4 text-white">
+        <div className="bg-gradient-to-r from-red-600 to-red-800 p-5 text-white">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Users size={20} />
-              <h2 className="text-lg font-semibold">Board Members</h2>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/10 rounded-xl">
+                <Users size={20} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold">Board Members</h2>
+                <p className="text-sm text-white/70">{boardTitle}</p>
+              </div>
             </div>
-            <button onClick={onClose} className="hover:bg-white/20 p-1 rounded">
+            <button 
+              onClick={onClose} 
+              className="hover:bg-white/20 p-2 rounded-xl transition-colors"
+            >
               <X size={20} />
             </button>
           </div>
-          <p className="text-sm text-white/80 mt-1">{boardTitle}</p>
         </div>
 
         {/* Invite Form */}
-        <form onSubmit={handleInvite} className="p-4 border-b bg-gray-50">
+        <form onSubmit={handleInvite} className="p-4 border-b border-neutral-800 bg-neutral-900/50">
           <div className="flex gap-2">
             <div className="flex-1 relative">
-              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <Mail className="absolute left-3 top-3 h-5 w-5 text-neutral-500" />
               <input
                 type="email"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
                 placeholder="Enter email to invite..."
-                className="w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-10 pr-3 py-2.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white text-sm placeholder-neutral-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
               />
             </div>
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
-              className="px-3 py-2 border rounded-lg text-sm bg-white"
+              className="px-3 py-2.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white text-sm focus:ring-2 focus:ring-red-500 cursor-pointer"
             >
               <option value="admin">Admin</option>
               <option value="editor">Editor</option>
@@ -121,7 +128,7 @@ const MembersModal = ({ boardId, boardTitle, isOpen, onClose }) => {
             <button
               type="submit"
               disabled={inviting || !inviteEmail.trim()}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 flex items-center gap-1"
+              className="bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors shadow-lg shadow-red-600/20"
             >
               {inviting ? <Loader className="animate-spin" size={16} /> : <UserPlus size={16} />}
               Invite
@@ -133,39 +140,43 @@ const MembersModal = ({ boardId, boardTitle, isOpen, onClose }) => {
         <div className="p-4 max-h-80 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center py-8">
-              <Loader className="animate-spin text-purple-500" size={24} />
+              <Loader className="animate-spin text-red-500" size={24} />
             </div>
           ) : members.length === 0 ? (
-            <p className="text-center text-gray-500 py-8">No members yet. Invite someone!</p>
+            <div className="text-center py-8">
+              <Users size={40} className="mx-auto text-neutral-600 mb-3" />
+              <p className="text-neutral-500">No members yet</p>
+              <p className="text-neutral-600 text-sm">Invite someone to collaborate!</p>
+            </div>
           ) : (
             <div className="space-y-2">
               {members.map((member) => {
                 const RoleIcon = ROLE_ICONS[member.role] || Eye;
-                const roleColor = ROLE_COLORS[member.role] || 'text-gray-500';
+                const roleStyle = ROLE_COLORS[member.role] || 'text-neutral-400 bg-neutral-500/10';
                 
                 return (
                   <div 
                     key={`${member.user_id}-${member.role}`}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 border"
+                    className="flex items-center justify-between p-3 rounded-xl bg-neutral-800/50 border border-neutral-700/50 hover:border-neutral-600 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-semibold">
+                      <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-700 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-red-500/20">
                         {member.user_name.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <p className="font-medium text-gray-800">{member.user_name}</p>
-                        <p className="text-sm text-gray-500">{member.user_email}</p>
+                        <p className="font-medium text-white">{member.user_name}</p>
+                        <p className="text-sm text-neutral-500">{member.user_email}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`flex items-center gap-1 text-sm font-medium ${roleColor}`}>
-                        <RoleIcon size={14} />
+                      <span className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-lg ${roleStyle}`}>
+                        <RoleIcon size={12} />
                         {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
                       </span>
                       {member.role !== 'owner' && member.id !== 0 && (
                         <button
                           onClick={() => handleRemoveMember(member.id, member.user_name)}
-                          className="text-gray-400 hover:text-red-500 p-1 rounded hover:bg-red-50"
+                          className="text-neutral-500 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-500/10 transition-colors"
                           title="Remove member"
                         >
                           <Trash2 size={14} />
@@ -180,10 +191,21 @@ const MembersModal = ({ boardId, boardTitle, isOpen, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t bg-gray-50 text-xs text-gray-500">
-          <p><strong>Admin:</strong> Full access, can invite members</p>
-          <p><strong>Editor:</strong> Can create and edit cards</p>
-          <p><strong>Viewer:</strong> Read-only access</p>
+        <div className="p-4 border-t border-neutral-800 bg-neutral-900/80">
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="flex items-center gap-2 text-red-400">
+              <Edit3 size={12} />
+              <span><strong>Admin</strong> - Full access</span>
+            </div>
+            <div className="flex items-center gap-2 text-emerald-400">
+              <Edit3 size={12} />
+              <span><strong>Editor</strong> - Edit cards</span>
+            </div>
+            <div className="flex items-center gap-2 text-neutral-400">
+              <Eye size={12} />
+              <span><strong>Viewer</strong> - Read only</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -191,4 +213,3 @@ const MembersModal = ({ boardId, boardTitle, isOpen, onClose }) => {
 };
 
 export default MembersModal;
-
