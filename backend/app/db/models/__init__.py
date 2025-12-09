@@ -8,7 +8,11 @@ from app.db.models.role import Role, RoleType
 from app.db.models.activity import Activity
 from app.db.models.automation import Automation
 
+# Import Base for Alembic
+from app.db.base import Base
+
 __all__ = [
+    "Base",
     "User",
     "Workspace", 
     "Board",
@@ -20,4 +24,3 @@ __all__ = [
     "Activity",
     "Automation",
 ]
-
