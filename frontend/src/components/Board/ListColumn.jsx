@@ -6,7 +6,7 @@ import useBoardStore from '../../store/boardStore';
 import { cardApi, listApi } from '../../api/services';
 import { MoreHorizontal, Plus, X, Trash2, GripVertical } from 'lucide-react';
 
-const ListColumn = ({ list, cards, index, boardId, onRefresh }) => {
+const ListColumn = ({ list, cards, index, onRefresh }) => {
   const [showAddCard, setShowAddCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState('');
   const [addingCard, setAddingCard] = useState(false);

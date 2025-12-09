@@ -134,7 +134,6 @@ const BoardView = ({ boardId, onRefresh }) => {
                     list={list}
                     cards={listCards}
                     index={index}
-                    boardId={boardId}
                     onRefresh={onRefresh}
                   />
                 );

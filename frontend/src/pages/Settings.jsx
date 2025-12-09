@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Sidebar from '../components/Layout/Sidebar';
 import Topbar from '../components/Layout/Topbar';
-import { Bell, Moon, Sun, Globe, Lock, Save, Loader, Eye, EyeOff, Palette } from 'lucide-react';
+import { Bell, Globe, Lock, Save, Loader, Eye, EyeOff, Palette } from 'lucide-react';
 
 // Settings storage key
 const SETTINGS_KEY = 'flowboard-settings';
@@ -32,8 +32,25 @@ const saveSettings = (settings) => {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
 };
 
+// Toggle Switch Component (defined outside)
+const ToggleSwitch = ({ enabled, onChange, label, description }) => (
+  <div className="flex items-center justify-between py-4">
+    <div>
+      <div className="font-medium text-white">{label}</div>
+      {description && <div className="text-sm text-neutral-500">{description}</div>}
+    </div>
+    <button
+      onClick={() => onChange(!enabled)}
+      className={`relative w-12 h-6 rounded-full transition-colors ${enabled ? 'bg-red-600' : 'bg-neutral-700'}`}
+    >
+      <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${enabled ? 'translate-x-7' : 'translate-x-1'}`} />
+    </button>
+  </div>
+);
+
 const Settings = () => {
-  const [settings, setSettings] = useState(defaultSettings);
+  // Initialize state directly from localStorage
+  const [settings, setSettings] = useState(() => loadSettings());
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   
@@ -42,12 +59,6 @@ const Settings = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPasswords, setShowPasswords] = useState(false);
-
-  // Load settings on mount
-  useEffect(() => {
-    const loaded = loadSettings();
-    setSettings(loaded);
-  }, []);
 
   // Update a setting
   const updateSetting = (key, value) => {
@@ -88,21 +99,6 @@ const Settings = () => {
     setConfirmPassword('');
     setSaving(false);
   };
-
-  const ToggleSwitch = ({ enabled, onChange, label, description }) => (
-    <div className="flex items-center justify-between py-4">
-      <div>
-        <div className="font-medium text-white">{label}</div>
-        {description && <div className="text-sm text-neutral-500">{description}</div>}
-      </div>
-      <button
-        onClick={() => onChange(!enabled)}
-        className={`relative w-12 h-6 rounded-full transition-colors ${enabled ? 'bg-red-600' : 'bg-neutral-700'}`}
-      >
-        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${enabled ? 'translate-x-7' : 'translate-x-1'}`} />
-      </button>
-    </div>
-  );
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a]">

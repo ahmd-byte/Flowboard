@@ -1,26 +1,26 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Settings, User, HelpCircle, Zap, Flame } from 'lucide-react';
+import { LayoutDashboard, Settings, User, HelpCircle, Flame } from 'lucide-react';
+
+const NavLink = ({ to, icon: Icon, label, isActive }) => (
+  <Link 
+    to={to} 
+    className={`flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 group ${
+      isActive 
+        ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
+        : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
+    }`}
+  >
+    <Icon size={20} className={`transition-transform duration-300 ${isActive ? '' : 'group-hover:scale-110'}`} />
+    <span className="font-medium">{label}</span>
+    {isActive && (
+      <div className="ml-auto w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+    )}
+  </Link>
+);
 
 const Sidebar = () => {
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
-
-  const NavLink = ({ to, icon: Icon, label }) => (
-    <Link 
-      to={to} 
-      className={`flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 group ${
-        isActive(to) 
-          ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
-          : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
-      }`}
-    >
-      <Icon size={20} className={`transition-transform duration-300 ${isActive(to) ? '' : 'group-hover:scale-110'}`} />
-      <span className="font-medium">{label}</span>
-      {isActive(to) && (
-        <div className="ml-auto w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-      )}
-    </Link>
-  );
 
   return (
     <div className="w-64 bg-[#0a0a0a] text-white h-screen flex flex-col fixed left-0 top-0 border-r border-neutral-800">
@@ -42,13 +42,13 @@ const Sidebar = () => {
       {/* Main Navigation */}
       <div className="flex-1 px-4 space-y-1 mt-4">
         <div className="text-[10px] uppercase text-neutral-600 font-bold px-3 mb-3 tracking-wider">Navigation</div>
-        <NavLink to="/" icon={LayoutDashboard} label="Dashboard" />
-        <NavLink to="/profile" icon={User} label="Profile" />
+        <NavLink to="/" icon={LayoutDashboard} label="Dashboard" isActive={isActive('/')} />
+        <NavLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} />
       </div>
       
       {/* Bottom Section */}
       <div className="p-4 space-y-1 border-t border-neutral-800">
-        <NavLink to="/settings" icon={Settings} label="Settings" />
+        <NavLink to="/settings" icon={Settings} label="Settings" isActive={isActive('/settings')} />
         <a 
           href="https://github.com" 
           target="_blank" 
