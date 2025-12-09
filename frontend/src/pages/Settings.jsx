@@ -1,16 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Sidebar from '../components/Layout/Sidebar';
 import Topbar from '../components/Layout/Topbar';
 import { Bell, Moon, Sun, Globe, Lock, Save, Loader, Eye, EyeOff, Palette } from 'lucide-react';
 
+// Settings storage key
+const SETTINGS_KEY = 'flowboard-settings';
+
+// Default settings
+const defaultSettings = {
+  darkMode: true,
+  emailNotifications: true,
+  cardCreated: true,
+  cardMoved: true,
+  memberInvited: true,
+  language: 'en',
+};
+
+// Load settings from localStorage
+const loadSettings = () => {
+  try {
+    const saved = localStorage.getItem(SETTINGS_KEY);
+    return saved ? { ...defaultSettings, ...JSON.parse(saved) } : defaultSettings;
+  } catch {
+    return defaultSettings;
+  }
+};
+
+// Save settings to localStorage
+const saveSettings = (settings) => {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+};
+
 const Settings = () => {
+  const [settings, setSettings] = useState(defaultSettings);
   const [saving, setSaving] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [cardCreated, setCardCreated] = useState(true);
-  const [cardMoved, setCardMoved] = useState(true);
-  const [memberInvited, setMemberInvited] = useState(true);
+  const [hasChanges, setHasChanges] = useState(false);
   
   // Password change
   const [currentPassword, setCurrentPassword] = useState('');
@@ -18,10 +43,29 @@ const Settings = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPasswords, setShowPasswords] = useState(false);
 
+  // Load settings on mount
+  useEffect(() => {
+    const loaded = loadSettings();
+    setSettings(loaded);
+  }, []);
+
+  // Update a setting
+  const updateSetting = (key, value) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
+    setHasChanges(true);
+  };
+
   const handleSaveNotifications = async () => {
     setSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    toast.success('Notification settings saved!');
+    
+    // Save to localStorage
+    saveSettings(settings);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    toast.success('Settings saved!');
+    setHasChanges(false);
     setSaving(false);
   };
 
@@ -79,8 +123,8 @@ const Settings = () => {
               </div>
               
               <ToggleSwitch
-                enabled={darkMode}
-                onChange={setDarkMode}
+                enabled={settings.darkMode}
+                onChange={(val) => updateSetting('darkMode', val)}
                 label="Dark Mode"
                 description="Use dark theme across the application"
               />
@@ -89,7 +133,11 @@ const Settings = () => {
                 <label className="block text-sm font-medium text-neutral-400 mb-2">Language</label>
                 <div className="relative">
                   <Globe className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500" />
-                  <select className="pl-12 w-full p-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none cursor-pointer">
+                  <select 
+                    value={settings.language}
+                    onChange={(e) => updateSetting('language', e.target.value)}
+                    className="pl-12 w-full p-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none cursor-pointer"
+                  >
                     <option value="en">English</option>
                     <option value="ms">Bahasa Malaysia</option>
                     <option value="zh">中文</option>
@@ -108,36 +156,36 @@ const Settings = () => {
               </div>
               
               <ToggleSwitch
-                enabled={emailNotifications}
-                onChange={setEmailNotifications}
+                enabled={settings.emailNotifications}
+                onChange={(val) => updateSetting('emailNotifications', val)}
                 label="Email Notifications"
                 description="Receive notifications via email"
               />
               
-              {emailNotifications && (
+              {settings.emailNotifications && (
                 <div className="pl-4 border-l-2 border-red-500/30 ml-2 space-y-0">
                   <ToggleSwitch
-                    enabled={cardCreated}
-                    onChange={setCardCreated}
+                    enabled={settings.cardCreated}
+                    onChange={(val) => updateSetting('cardCreated', val)}
                     label="Card Created"
                     description="When a new card is added to your boards"
                   />
                   <ToggleSwitch
-                    enabled={cardMoved}
-                    onChange={setCardMoved}
+                    enabled={settings.cardMoved}
+                    onChange={(val) => updateSetting('cardMoved', val)}
                     label="Card Moved"
                     description="When a card is moved between lists"
                   />
                   <ToggleSwitch
-                    enabled={memberInvited}
-                    onChange={setMemberInvited}
+                    enabled={settings.memberInvited}
+                    onChange={(val) => updateSetting('memberInvited', val)}
                     label="Board Invitations"
                     description="When you're invited to a board"
                   />
                 </div>
               )}
               
-              <div className="pt-4 mt-4 border-t border-neutral-800">
+              <div className="pt-4 mt-4 border-t border-neutral-800 flex items-center gap-3">
                 <button
                   onClick={handleSaveNotifications}
                   disabled={saving}
@@ -146,6 +194,9 @@ const Settings = () => {
                   {saving ? <Loader className="animate-spin" size={16} /> : <Save size={16} />}
                   Save Preferences
                 </button>
+                {hasChanges && (
+                  <span className="text-sm text-amber-500">• Unsaved changes</span>
+                )}
               </div>
             </div>
 
