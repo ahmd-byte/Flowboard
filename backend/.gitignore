@@ -1,4 +1,6 @@
+# =========================
 # Python
+# =========================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -19,51 +21,93 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
+# =========================
 # Virtual Environment
+# =========================
 venv/
 .venv/
 ENV/
+env/
+.env/
 
-# Environment variables
+# =========================
+# Environment Variables
+# =========================
 .env
 .env.local
+.env.development
+.env.production
 *.env
 
-# IDE
+# =========================
+# IDE & Editors
+# =========================
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
 
+# =========================
 # Testing
+# =========================
 .tox/
+.nox/
 .coverage
 .coverage.*
 htmlcov/
 .pytest_cache/
 nosetests.xml
 coverage.xml
+*.cover
+.hypothesis/
 
+# =========================
 # Celery
+# =========================
 celerybeat-schedule
 celerybeat.pid
+celerybeat-schedule.db
 
+# =========================
 # Logs
+# =========================
 *.log
+logs/
 
+# =========================
 # Database
+# =========================
 *.db
 *.sqlite3
+*.sqlite
 
-# SSL Certs (keep the directory, ignore contents except .gitkeep)
-# app/cert/*.pem
+# =========================
+# SSL/TLS Certificates
+# =========================
+app/cert/*.pem
+app/cert/*.key
+app/cert/*.crt
+*.pem
+*.key
+*.crt
 
-# OS
+# =========================
+# OS Generated
+# =========================
 .DS_Store
 Thumbs.db
 
+# =========================
 # Alembic
-# Keep versions but ignore auto-generated __pycache__
+# =========================
 alembic/versions/__pycache__/
 
+# =========================
+# Misc
+# =========================
+*.bak
+*.tmp
+.cache/
