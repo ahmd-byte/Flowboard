@@ -6,7 +6,7 @@ import Topbar from '../components/Layout/Topbar';
 import EmptyState from '../components/UI/EmptyState';
 import { BoardSkeleton, StatsSkeleton } from '../components/UI/Skeletons';
 import { boardApi, statsApi } from '../api/services';
-import { Plus, X, LayoutDashboard, CheckSquare, Users, TrendingUp, Sparkles, Activity } from 'lucide-react';
+import { Plus, X, LayoutDashboard, CheckSquare, Users, TrendingUp, Sparkles, Trash2, MoreVertical } from 'lucide-react';
 
 const BACKGROUNDS = [
   'bg-gradient-to-br from-red-600 to-red-900',
@@ -24,6 +24,8 @@ const Dashboard = () => {
   const [newBoardTitle, setNewBoardTitle] = useState('');
   const [selectedBg, setSelectedBg] = useState(BACKGROUNDS[0]);
   const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [menuOpenId, setMenuOpenId] = useState(null);
   const [dashboardStats, setDashboardStats] = useState({
     total_boards: 0,
     total_cards: 0,
@@ -36,6 +38,13 @@ const Dashboard = () => {
   useEffect(() => {
     fetchBoards();
     fetchStats();
+  }, []);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setMenuOpenId(null);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const fetchBoards = async () => {
@@ -73,11 +82,32 @@ const Dashboard = () => {
       setShowModal(false);
       setNewBoardTitle('');
       toast.success('Board created!');
+      fetchStats();
     } catch (err) {
       console.error('Failed to create board:', err);
       toast.error('Failed to create board');
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleDeleteBoard = async (boardId, boardTitle) => {
+    if (!confirm(`Are you sure you want to delete "${boardTitle}"? This action cannot be undone.`)) {
+      return;
+    }
+    
+    setDeletingId(boardId);
+    try {
+      await boardApi.delete(boardId);
+      setBoards(boards.filter(b => b.id !== boardId));
+      toast.success('Board deleted!');
+      fetchStats();
+    } catch (err) {
+      console.error('Failed to delete board:', err);
+      toast.error('Failed to delete board');
+    } finally {
+      setDeletingId(null);
+      setMenuOpenId(null);
     }
   };
 
@@ -190,23 +220,59 @@ const Dashboard = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 stagger-children">
               {boards.map((board, i) => (
-                <Link 
-                  to={`/board/${board.id}`} 
+                <div 
                   key={board.id} 
-                  className="block group animate-slide-up"
+                  className="relative group animate-slide-up"
                   style={{ animationDelay: `${i * 50}ms` }}
                 >
-                  <div className={`h-36 rounded-2xl p-5 shadow-lg transition-all duration-300 ${board.background} relative overflow-hidden card-hover border border-white/10`}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute top-3 right-3 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                    <div className="relative z-10 h-full flex flex-col justify-end">
-                      <h3 className="text-white font-bold text-lg mb-1 group-hover:text-red-300 transition-colors">
-                        {board.title}
-                      </h3>
-                      <p className="text-white/60 text-xs">Click to open board</p>
+                  <Link to={`/board/${board.id}`}>
+                    <div className={`h-36 rounded-2xl p-5 shadow-lg transition-all duration-300 ${board.background || BACKGROUNDS[0]} relative overflow-hidden card-hover border border-white/10`}>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute top-3 left-3 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                      <div className="relative z-10 h-full flex flex-col justify-end">
+                        <h3 className="text-white font-bold text-lg mb-1 group-hover:text-red-300 transition-colors">
+                          {board.title}
+                        </h3>
+                        <p className="text-white/60 text-xs">Click to open board</p>
+                      </div>
                     </div>
+                  </Link>
+                  
+                  {/* Menu Button */}
+                  <div className="absolute top-3 right-3 z-20">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setMenuOpenId(menuOpenId === board.id ? null : board.id);
+                      }}
+                      className="p-1.5 bg-black/50 hover:bg-black/70 rounded-lg text-white/70 hover:text-white opacity-0 group-hover:opacity-100 transition-all"
+                    >
+                      <MoreVertical size={16} />
+                    </button>
+                    
+                    {/* Dropdown Menu */}
+                    {menuOpenId === board.id && (
+                      <div 
+                        className="absolute right-0 mt-1 w-40 bg-neutral-900 rounded-xl border border-neutral-700 shadow-xl overflow-hidden z-30"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          onClick={() => handleDeleteBoard(board.id, board.title)}
+                          disabled={deletingId === board.id}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-red-500 hover:bg-red-500/10 transition-colors text-sm"
+                        >
+                          {deletingId === board.id ? (
+                            <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+                          ) : (
+                            <Trash2 size={16} />
+                          )}
+                          Delete Board
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </Link>
+                </div>
               ))}
               
               {/* Add Board Card */}
