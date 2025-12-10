@@ -205,14 +205,14 @@ const BoardView = ({ boardId, onRefresh }) => {
             </button>
             
             {showExportMenu && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-neutral-900 rounded-xl border border-neutral-700 shadow-xl overflow-hidden z-30 animate-scale-in">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-neutral-900 dark:bg-neutral-900 light:bg-white rounded-xl border border-neutral-700 dark:border-neutral-700 light:border-gray-200 shadow-xl overflow-hidden z-30 animate-scale-in">
                 <button
                   onClick={() => {
                     exportAsJSON(board, lists, cards);
                     setShowExportMenu(false);
                     toast.success('Board exported as JSON!');
                   }}
-                  className="w-full flex items-center gap-2 px-4 py-3 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors text-sm"
+                  className="w-full flex items-center gap-2 px-4 py-3 text-neutral-300 dark:text-neutral-300 light:text-gray-700 hover:bg-neutral-800 dark:hover:bg-neutral-800 light:hover:bg-gray-100 hover:text-white dark:hover:text-white light:hover:text-gray-900 transition-colors text-sm"
                 >
                   <FileJson size={16} />
                   Export as JSON
@@ -223,7 +223,7 @@ const BoardView = ({ boardId, onRefresh }) => {
                     setShowExportMenu(false);
                     toast.success('Opening print preview...');
                   }}
-                  className="w-full flex items-center gap-2 px-4 py-3 text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors text-sm"
+                  className="w-full flex items-center gap-2 px-4 py-3 text-neutral-300 dark:text-neutral-300 light:text-gray-700 hover:bg-neutral-800 dark:hover:bg-neutral-800 light:hover:bg-gray-100 hover:text-white dark:hover:text-white light:hover:text-gray-900 transition-colors text-sm"
                 >
                   <FileText size={16} />
                   Export as PDF
@@ -271,13 +271,13 @@ const BoardView = ({ boardId, onRefresh }) => {
               {/* Add List */}
               <div className="w-64 sm:w-72 flex-shrink-0">
                 {showAddList ? (
-                  <form onSubmit={handleAddList} className="bg-neutral-900/90 backdrop-blur rounded-2xl p-3 border border-neutral-800">
+                  <form onSubmit={handleAddList} className="bg-neutral-900/90 dark:bg-neutral-900/90 light:bg-white/90 backdrop-blur rounded-2xl p-3 border border-neutral-800 dark:border-neutral-800 light:border-gray-200">
                     <input
                       type="text"
                       value={newListTitle}
                       onChange={(e) => setNewListTitle(e.target.value)}
                       placeholder="Enter list title..."
-                      className="w-full p-2.5 rounded-xl bg-neutral-800 border border-neutral-700 text-white placeholder-neutral-500 focus:ring-2 focus:ring-red-500 focus:border-transparent mb-2"
+                      className="w-full p-2.5 rounded-xl bg-neutral-800 dark:bg-neutral-800 light:bg-gray-50 border border-neutral-700 dark:border-neutral-700 light:border-gray-300 text-white dark:text-white light:text-gray-900 placeholder-neutral-500 dark:placeholder-neutral-500 light:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent mb-2"
                       autoFocus
                     />
                     <div className="flex gap-2">
@@ -298,7 +298,7 @@ const BoardView = ({ boardId, onRefresh }) => {
                       <button
                         type="button"
                         onClick={() => { setShowAddList(false); setNewListTitle(''); }}
-                        className="text-neutral-400 hover:text-white p-2 hover:bg-neutral-800 rounded-xl transition-colors"
+                        className="text-neutral-400 dark:text-neutral-400 light:text-gray-600 hover:text-white dark:hover:text-white light:hover:text-gray-900 p-2 hover:bg-neutral-800 dark:hover:bg-neutral-800 light:hover:bg-gray-100 rounded-xl transition-colors"
                       >
                         <X size={18} />
                       </button>
@@ -307,7 +307,7 @@ const BoardView = ({ boardId, onRefresh }) => {
                 ) : (
                   <button 
                     onClick={() => setShowAddList(true)}
-                    className="w-full bg-white/10 hover:bg-white/20 text-white p-3.5 rounded-2xl flex items-center gap-2 transition-all duration-300 backdrop-blur-sm border border-white/20 group"
+                    className="w-full bg-white/10 dark:bg-white/10 light:bg-gray-100 hover:bg-white/20 dark:hover:bg-white/20 light:hover:bg-gray-200 text-white dark:text-white light:text-gray-900 p-3.5 rounded-2xl flex items-center gap-2 transition-all duration-300 backdrop-blur-sm border border-white/20 dark:border-white/20 light:border-gray-300 group"
                   >
                     <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
                     <span className="font-medium">Add another list</span>

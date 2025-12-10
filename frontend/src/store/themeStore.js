@@ -10,34 +10,57 @@ const useThemeStore = create(
         const newTheme = get().theme === 'dark' ? 'light' : 'dark';
         set({ theme: newTheme });
         
-        // Apply theme to document
+        // Apply theme to document and body
+        const html = document.documentElement;
+        const body = document.body;
+        
         if (newTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-          document.documentElement.classList.remove('light');
+          html.classList.add('dark');
+          html.classList.remove('light');
+          body.classList.add('dark');
+          body.classList.remove('light');
         } else {
-          document.documentElement.classList.add('light');
-          document.documentElement.classList.remove('dark');
+          html.classList.add('light');
+          html.classList.remove('dark');
+          body.classList.add('light');
+          body.classList.remove('dark');
         }
       },
       
       setTheme: (theme) => {
         set({ theme });
+        const html = document.documentElement;
+        const body = document.body;
+        
         if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-          document.documentElement.classList.remove('light');
+          html.classList.add('dark');
+          html.classList.remove('light');
+          body.classList.add('dark');
+          body.classList.remove('light');
         } else {
-          document.documentElement.classList.add('light');
-          document.documentElement.classList.remove('dark');
+          html.classList.add('light');
+          html.classList.remove('dark');
+          body.classList.add('light');
+          body.classList.remove('dark');
         }
       },
       
       // Initialize theme on app load
       initTheme: () => {
         const theme = get().theme;
+        const html = document.documentElement;
+        const body = document.body;
+        
         if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
+          html.classList.add('dark');
+          html.classList.remove('light');
+          body.classList.add('dark');
+          body.classList.remove('light');
         } else {
-          document.documentElement.classList.add('light');
+          html.classList.add('light');
+          html.classList.remove('dark');
+          body.classList.add('light');
+          body.classList.remove('dark');
         }
       }
     }),

@@ -6,6 +6,7 @@ import BoardPage from './pages/BoardPage';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import OfflineIndicator from './components/UI/OfflineIndicator';
+import ErrorBoundary from './components/UI/ErrorBoundary';
 import useUserStore, { selectIsAuthenticated } from './store/userStore';
 
 const PrivateRoute = ({ children }) => {
@@ -15,9 +16,9 @@ const PrivateRoute = ({ children }) => {
 
 function App() {
   return (
-    <>
-    <OfflineIndicator />
-    <Routes>
+    <ErrorBoundary>
+      <OfflineIndicator />
+      <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route 
@@ -53,7 +54,7 @@ function App() {
         } 
       />
     </Routes>
-    </>
+    </ErrorBoundary>
   );
 }
 

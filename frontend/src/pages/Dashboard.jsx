@@ -149,7 +149,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0a]">
+    <div className="flex min-h-screen bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-gray-50">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar />
@@ -160,8 +160,8 @@ const Dashboard = () => {
               <Sparkles size={20} className="text-red-500" />
               <span className="text-red-500 font-medium text-sm">Dashboard</span>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome back! 👋</h1>
-            <p className="text-neutral-500">Here's what's happening with your projects today.</p>
+            <h1 className="text-3xl font-bold text-white dark:text-white light:text-gray-900 mb-2">Welcome back! 👋</h1>
+            <p className="text-neutral-500 dark:text-neutral-500 light:text-gray-600">Here's what's happening with your projects today.</p>
           </div>
           
           {/* Stats Grid */}
@@ -172,20 +172,20 @@ const Dashboard = () => {
               {stats.map((stat, i) => (
                 <div 
                   key={i}
-                  className="bg-neutral-900 rounded-2xl p-5 border border-neutral-800 hover:border-neutral-700 transition-all duration-300 animate-slide-up group"
+                  className="bg-neutral-900 dark:bg-neutral-900 light:bg-white rounded-2xl p-5 border border-neutral-800 dark:border-neutral-800 light:border-gray-200 hover:border-neutral-700 dark:hover:border-neutral-700 light:hover:border-gray-300 transition-all duration-300 animate-slide-up group"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className={`p-2.5 rounded-xl ${stat.bg}`}>
                       <stat.icon size={20} className={stat.color} />
                     </div>
-                    <span className="text-[10px] text-neutral-500 bg-neutral-800 px-2 py-1 rounded-full">
+                    <span className="text-[10px] text-neutral-500 dark:text-neutral-500 light:text-gray-600 bg-neutral-800 dark:bg-neutral-800 light:bg-gray-100 px-2 py-1 rounded-full">
                       {stat.change}
                     </span>
                   </div>
-                  <div className="text-3xl font-bold text-white mb-1 group-hover:text-red-500 transition-colors">
+                  <div className="text-3xl font-bold text-white dark:text-white light:text-gray-900 mb-1 group-hover:text-red-500 transition-colors">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-neutral-500">{stat.label}</div>
+                  <div className="text-sm text-neutral-500 dark:text-neutral-500 light:text-gray-600">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -194,8 +194,8 @@ const Dashboard = () => {
           {/* Boards Section */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-xl font-bold text-white">Your Boards</h2>
-              <p className="text-sm text-neutral-500">Manage and organize your projects</p>
+              <h2 className="text-xl font-bold text-white dark:text-white light:text-gray-900">Your Boards</h2>
+              <p className="text-sm text-neutral-500 dark:text-neutral-500 light:text-gray-600">Manage and organize your projects</p>
             </div>
             <button 
               onClick={() => setShowModal(true)}
@@ -255,7 +255,7 @@ const Dashboard = () => {
                     {/* Dropdown Menu */}
                     {menuOpenId === board.id && (
                       <div 
-                        className="absolute right-0 mt-1 w-40 bg-neutral-900 rounded-xl border border-neutral-700 shadow-xl overflow-hidden z-30"
+                        className="absolute right-0 mt-1 w-40 bg-neutral-900 dark:bg-neutral-900 light:bg-white rounded-xl border border-neutral-700 dark:border-neutral-700 light:border-gray-200 shadow-xl overflow-hidden z-30"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <button
@@ -279,9 +279,9 @@ const Dashboard = () => {
               {/* Add Board Card */}
               <button 
                 onClick={() => setShowModal(true)}
-                className="h-36 bg-neutral-900 rounded-2xl p-5 border-2 border-dashed border-neutral-700 hover:border-red-500/50 hover:bg-neutral-800/50 transition-all duration-300 flex flex-col items-center justify-center text-neutral-500 hover:text-red-500 group"
+                className="h-36 bg-neutral-900 dark:bg-neutral-900 light:bg-white rounded-2xl p-5 border-2 border-dashed border-neutral-700 dark:border-neutral-700 light:border-gray-300 hover:border-red-500/50 hover:bg-neutral-800/50 dark:hover:bg-neutral-800/50 light:hover:bg-gray-50 transition-all duration-300 flex flex-col items-center justify-center text-neutral-500 dark:text-neutral-500 light:text-gray-600 hover:text-red-500 group"
               >
-                <div className="p-3 bg-neutral-800 rounded-xl group-hover:bg-red-500/20 mb-2 transition-all duration-300">
+                <div className="p-3 bg-neutral-800 dark:bg-neutral-800 light:bg-gray-100 rounded-xl group-hover:bg-red-500/20 mb-2 transition-all duration-300">
                   <Plus size={24} />
                 </div>
                 <span className="font-medium text-sm">Create new board</span>
@@ -296,13 +296,13 @@ const Dashboard = () => {
 
       {/* Create Board Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
-          <div className="bg-neutral-900 rounded-2xl p-6 w-full max-w-md shadow-2xl border border-neutral-800 animate-scale-in">
+        <div className="fixed inset-0 bg-black/80 dark:bg-black/80 light:bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-neutral-900 dark:bg-neutral-900 light:bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-neutral-800 dark:border-neutral-800 light:border-gray-200 animate-scale-in">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-white">Create New Board</h2>
+              <h2 className="text-xl font-bold text-white dark:text-white light:text-gray-900">Create New Board</h2>
               <button 
                 onClick={() => setShowModal(false)} 
-                className="text-neutral-500 hover:text-white hover:bg-neutral-800 p-2 rounded-lg transition-colors"
+                className="text-neutral-500 dark:text-neutral-500 light:text-gray-600 hover:text-white dark:hover:text-white light:hover:text-gray-900 hover:bg-neutral-800 dark:hover:bg-neutral-800 light:hover:bg-gray-100 p-2 rounded-lg transition-colors"
               >
                 <X size={20} />
               </button>
@@ -310,19 +310,19 @@ const Dashboard = () => {
             
             <form onSubmit={handleCreateBoard}>
               <div className="mb-5">
-                <label className="block text-sm font-medium text-neutral-400 mb-2">Board Title</label>
+                <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-2">Board Title</label>
                 <input
                   type="text"
                   value={newBoardTitle}
                   onChange={(e) => setNewBoardTitle(e.target.value)}
-                  className="w-full p-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                  className="w-full p-3.5 bg-neutral-800 dark:bg-neutral-800 light:bg-gray-50 border border-neutral-700 dark:border-neutral-700 light:border-gray-300 rounded-xl text-white dark:text-white light:text-gray-900 placeholder-neutral-500 dark:placeholder-neutral-500 light:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                   placeholder="Enter board title..."
                   autoFocus
                 />
               </div>
               
               <div className="mb-6">
-                <label className="block text-sm font-medium text-neutral-400 mb-3">Background</label>
+                <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-3">Background</label>
                 <div className="grid grid-cols-6 gap-2">
                   {BACKGROUNDS.map((bg, idx) => (
                     <button

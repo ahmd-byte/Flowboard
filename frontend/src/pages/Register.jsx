@@ -43,7 +43,7 @@ const Register = () => {
   ];
 
   return (
-    <div className="min-h-screen flex bg-[#0a0a0a] overflow-hidden">
+    <div className="min-h-screen flex bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-gray-50 overflow-hidden">
       {/* Left Side - Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md animate-fade-in">
@@ -52,59 +52,59 @@ const Register = () => {
             <div className="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/30">
               <Flame size={28} className="text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">Flowboard</span>
+            <span className="text-2xl font-bold text-white dark:text-white light:text-gray-900">Flowboard</span>
           </div>
           
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-white mb-2">Create account</h2>
-            <p className="text-neutral-500">Start managing your projects today</p>
+            <h2 className="text-3xl font-bold text-white dark:text-white light:text-gray-900 mb-2">Create account</h2>
+            <p className="text-neutral-500 dark:text-neutral-500 light:text-gray-600">Start managing your projects today</p>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-neutral-400 mb-2">Full Name</label>
+              <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-2">Full Name</label>
               <div className="relative">
-                <User className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500" />
+                <User className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500 dark:text-neutral-500 light:text-gray-500" />
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="pl-12 w-full p-3.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white placeholder-neutral-600 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                  className="pl-12 w-full p-3.5 bg-neutral-900 dark:bg-neutral-900 light:bg-white border border-neutral-800 dark:border-neutral-800 light:border-gray-300 rounded-xl text-white dark:text-white light:text-gray-900 placeholder-neutral-600 dark:placeholder-neutral-600 light:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
                   placeholder="John Doe"
                 />
               </div>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-neutral-400 mb-2">Email</label>
+              <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-2">Email</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500" />
+                <Mail className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500 dark:text-neutral-500 light:text-gray-500" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-12 w-full p-3.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white placeholder-neutral-600 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                  className="pl-12 w-full p-3.5 bg-neutral-900 dark:bg-neutral-900 light:bg-white border border-neutral-800 dark:border-neutral-800 light:border-gray-300 rounded-xl text-white dark:text-white light:text-gray-900 placeholder-neutral-600 dark:placeholder-neutral-600 light:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
                   placeholder="you@example.com"
                 />
               </div>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-neutral-400 mb-2">Password</label>
+              <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-2">Password</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500" />
+                <Lock className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500 dark:text-neutral-500 light:text-gray-500" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-12 w-full p-3.5 bg-neutral-900 border border-neutral-800 rounded-xl text-white placeholder-neutral-600 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                  className="pl-12 w-full p-3.5 bg-neutral-900 dark:bg-neutral-900 light:bg-white border border-neutral-800 dark:border-neutral-800 light:border-gray-300 rounded-xl text-white dark:text-white light:text-gray-900 placeholder-neutral-600 dark:placeholder-neutral-600 light:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
                   placeholder="••••••••"
                 />
               </div>
-              <p className="mt-1.5 text-xs text-neutral-600">Must be at least 6 characters</p>
+              <p className="mt-1.5 text-xs text-neutral-600 dark:text-neutral-600 light:text-gray-500">Must be at least 6 characters</p>
             </div>
             
             <button
@@ -124,7 +124,7 @@ const Register = () => {
           </form>
           
           <div className="mt-8 text-center">
-            <span className="text-neutral-500">Already have an account? </span>
+            <span className="text-neutral-500 dark:text-neutral-500 light:text-gray-600">Already have an account? </span>
             <Link to="/login" className="text-red-500 hover:text-red-400 font-semibold transition-colors">
               Sign in
             </Link>

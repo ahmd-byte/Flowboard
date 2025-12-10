@@ -36,12 +36,12 @@ const saveSettings = (settings) => {
 const ToggleSwitch = ({ enabled, onChange, label, description }) => (
   <div className="flex items-center justify-between py-4">
     <div>
-      <div className="font-medium text-white">{label}</div>
-      {description && <div className="text-sm text-neutral-500">{description}</div>}
+      <div className="font-medium text-white dark:text-white light:text-gray-900">{label}</div>
+      {description && <div className="text-sm text-neutral-500 dark:text-neutral-500 light:text-gray-600">{description}</div>}
     </div>
     <button
       onClick={() => onChange(!enabled)}
-      className={`relative w-12 h-6 rounded-full transition-colors ${enabled ? 'bg-red-600' : 'bg-neutral-700'}`}
+      className={`relative w-12 h-6 rounded-full transition-colors ${enabled ? 'bg-red-600' : 'bg-neutral-700 dark:bg-neutral-700 light:bg-gray-300'}`}
     >
       <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${enabled ? 'translate-x-7' : 'translate-x-1'}`} />
     </button>
@@ -101,21 +101,21 @@ const Settings = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0a]">
+    <div className="flex min-h-screen bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-gray-50">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Topbar />
         <div className="p-4 sm:p-6 lg:p-8 lg:ml-64 animate-fade-in pt-20 lg:pt-8">
-          <h1 className="text-2xl font-bold text-white mb-6">Settings</h1>
+          <h1 className="text-2xl font-bold text-white dark:text-white light:text-gray-900 mb-6">Settings</h1>
           
           <div className="max-w-3xl space-y-6">
             {/* Appearance */}
-            <div className="bg-neutral-900 rounded-2xl border border-neutral-800 p-6">
+            <div className="bg-neutral-900 dark:bg-neutral-900 light:bg-white rounded-2xl border border-neutral-800 dark:border-neutral-800 light:border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-red-500/10 rounded-xl">
                   <Palette size={20} className="text-red-500" />
                 </div>
-                <h3 className="text-lg font-semibold text-white">Appearance</h3>
+                <h3 className="text-lg font-semibold text-white dark:text-white light:text-gray-900">Appearance</h3>
               </div>
               
               <ToggleSwitch
@@ -125,14 +125,14 @@ const Settings = () => {
                 description="Use dark theme across the application"
               />
               
-              <div className="pt-4 border-t border-neutral-800">
-                <label className="block text-sm font-medium text-neutral-400 mb-2">Language</label>
+              <div className="pt-4 border-t border-neutral-800 dark:border-neutral-800 light:border-gray-200">
+                <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-2">Language</label>
                 <div className="relative">
-                  <Globe className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500" />
+                  <Globe className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500 dark:text-neutral-500 light:text-gray-500" />
                   <select 
                     value={settings.language}
                     onChange={(e) => updateSetting('language', e.target.value)}
-                    className="pl-12 w-full p-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none cursor-pointer"
+                    className="pl-12 w-full p-3.5 bg-neutral-800 dark:bg-neutral-800 light:bg-gray-50 border border-neutral-700 dark:border-neutral-700 light:border-gray-300 rounded-xl text-white dark:text-white light:text-gray-900 focus:ring-2 focus:ring-red-500 focus:border-transparent appearance-none cursor-pointer"
                   >
                     <option value="en">English</option>
                     <option value="ms">Bahasa Malaysia</option>
@@ -143,12 +143,12 @@ const Settings = () => {
             </div>
 
             {/* Notifications */}
-            <div className="bg-neutral-900 rounded-2xl border border-neutral-800 p-6">
+            <div className="bg-neutral-900 dark:bg-neutral-900 light:bg-white rounded-2xl border border-neutral-800 dark:border-neutral-800 light:border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-red-500/10 rounded-xl">
                   <Bell size={20} className="text-red-500" />
                 </div>
-                <h3 className="text-lg font-semibold text-white">Notifications</h3>
+                <h3 className="text-lg font-semibold text-white dark:text-white light:text-gray-900">Notifications</h3>
               </div>
               
               <ToggleSwitch
@@ -181,7 +181,7 @@ const Settings = () => {
                 </div>
               )}
               
-              <div className="pt-4 mt-4 border-t border-neutral-800 flex items-center gap-3">
+              <div className="pt-4 mt-4 border-t border-neutral-800 dark:border-neutral-800 light:border-gray-200 flex items-center gap-3">
                 <button
                   onClick={handleSaveNotifications}
                   disabled={saving}
@@ -197,32 +197,32 @@ const Settings = () => {
             </div>
 
             {/* Security */}
-            <div className="bg-neutral-900 rounded-2xl border border-neutral-800 p-6">
+            <div className="bg-neutral-900 dark:bg-neutral-900 light:bg-white rounded-2xl border border-neutral-800 dark:border-neutral-800 light:border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-red-500/10 rounded-xl">
                   <Lock size={20} className="text-red-500" />
                 </div>
-                <h3 className="text-lg font-semibold text-white">Security</h3>
+                <h3 className="text-lg font-semibold text-white dark:text-white light:text-gray-900">Security</h3>
               </div>
               
               <form onSubmit={handleChangePassword} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-400 mb-2">
+                  <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-2">
                     Current Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500" />
+                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500 dark:text-neutral-500 light:text-gray-500" />
                     <input
                       type={showPasswords ? 'text' : 'password'}
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="pl-12 pr-12 w-full p-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                      className="pl-12 pr-12 w-full p-3.5 bg-neutral-800 dark:bg-neutral-800 light:bg-gray-50 border border-neutral-700 dark:border-neutral-700 light:border-gray-300 rounded-xl text-white dark:text-white light:text-gray-900 placeholder-neutral-500 dark:placeholder-neutral-500 light:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                       placeholder="Enter current password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPasswords(!showPasswords)}
-                      className="absolute right-4 top-3.5 text-neutral-500 hover:text-neutral-300 transition-colors"
+                      className="absolute right-4 top-3.5 text-neutral-500 dark:text-neutral-500 light:text-gray-500 hover:text-neutral-300 dark:hover:text-neutral-300 light:hover:text-gray-700 transition-colors"
                     >
                       {showPasswords ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
@@ -230,32 +230,32 @@ const Settings = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-400 mb-2">
+                  <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-2">
                     New Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500" />
+                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500 dark:text-neutral-500 light:text-gray-500" />
                     <input
                       type={showPasswords ? 'text' : 'password'}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="pl-12 w-full p-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                      className="pl-12 w-full p-3.5 bg-neutral-800 dark:bg-neutral-800 light:bg-gray-50 border border-neutral-700 dark:border-neutral-700 light:border-gray-300 rounded-xl text-white dark:text-white light:text-gray-900 placeholder-neutral-500 dark:placeholder-neutral-500 light:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                       placeholder="Enter new password"
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-neutral-400 mb-2">
+                  <label className="block text-sm font-medium text-neutral-400 dark:text-neutral-400 light:text-gray-700 mb-2">
                     Confirm New Password
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500" />
+                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-neutral-500 dark:text-neutral-500 light:text-gray-500" />
                     <input
                       type={showPasswords ? 'text' : 'password'}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="pl-12 w-full p-3.5 bg-neutral-800 border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                      className="pl-12 w-full p-3.5 bg-neutral-800 dark:bg-neutral-800 light:bg-gray-50 border border-neutral-700 dark:border-neutral-700 light:border-gray-300 rounded-xl text-white dark:text-white light:text-gray-900 placeholder-neutral-500 dark:placeholder-neutral-500 light:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                       placeholder="Confirm new password"
                     />
                   </div>

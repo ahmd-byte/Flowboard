@@ -30,18 +30,78 @@
   --color-text-subtle: #a3a3a3;
 }
 
-/* Apply theme colors */
-.light body,
-.light .bg-\[\\#0a0a0a\],
-.light .bg-neutral-900 {
-  background-color: var(--color-bg) !important;
+/* ===== LIGHT MODE OVERRIDES - COMPREHENSIVE ===== */
+/* Force light mode on all elements */
+.light {
+  color-scheme: light !important;
 }
 
-.light .bg-neutral-800 {
+.light,
+.light * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.light body,
+.light html,
+.light #root {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
+}
+
+/* ===== BACKGROUND COLORS - AGGRESSIVE OVERRIDES ===== */
+.light .bg-\[\\#0a0a0a\],
+.light .bg-\[\\#141414\],
+.light .bg-neutral-900,
+.light .bg-neutral-950,
+.light [class*="bg-neutral-900"],
+.light [class*="bg-\\[\\#0a0a0a\\]"],
+.light [class*="bg-\\[\\#141414\\]"] {
   background-color: var(--color-bg-card) !important;
 }
 
-.light .text-white {
+.light .bg-neutral-800,
+.light [class*="bg-neutral-800"] {
+  background-color: var(--color-bg-hover) !important;
+}
+
+.light .bg-neutral-700,
+.light [class*="bg-neutral-700"] {
+  background-color: var(--color-border) !important;
+}
+
+.light .bg-neutral-600 {
+  background-color: #d4d4d4 !important;
+}
+
+/* Opacity variants */
+.light .bg-neutral-900\/50,
+.light .bg-neutral-900\/90,
+.light .bg-neutral-900\/80 {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.light .bg-neutral-800\/50,
+.light .bg-neutral-800\/90 {
+  background-color: rgba(240, 240, 240, 0.5) !important;
+}
+
+.light .bg-black\/80,
+.light .bg-black\/60,
+.light .bg-black\/50,
+.light .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ===== TEXT COLORS - AGGRESSIVE OVERRIDES ===== */
+.light .text-white,
+.light .text-neutral-50,
+.light .text-neutral-100,
+.light [class*="text-white"] {
+  color: var(--color-text) !important;
+}
+
+.light .text-neutral-200,
+.light .text-neutral-300 {
   color: var(--color-text) !important;
 }
 
@@ -50,8 +110,251 @@
   color: var(--color-text-muted) !important;
 }
 
+.light .text-neutral-600 {
+  color: var(--color-text-subtle) !important;
+}
+
+.light .text-neutral-700 {
+  color: #404040 !important;
+}
+
+/* ===== BORDER COLORS ===== */
 .light .border-neutral-800,
-.light .border-neutral-700 {
+.light .border-neutral-700,
+.light .border-neutral-900,
+.light [class*="border-neutral-800"],
+.light [class*="border-neutral-700"] {
+  border-color: var(--color-border) !important;
+}
+
+.light .border-white\/10,
+.light .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ===== INPUTS, TEXTAREAS, SELECTS ===== */
+.light input,
+.light textarea,
+.light select,
+.light input[type="text"],
+.light input[type="email"],
+.light input[type="password"],
+.light input[type="search"],
+.light textarea,
+.light select {
+  background-color: var(--color-bg-input) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder,
+.light input::placeholder,
+.light textarea::placeholder {
+  color: var(--color-text-muted) !important;
+  opacity: 0.7 !important;
+}
+
+.light input:disabled,
+.light textarea:disabled,
+.light select:disabled {
+  background-color: #f5f5f5 !important;
+  color: #999 !important;
+}
+
+/* ===== BUTTONS ===== */
+.light button:not(.bg-red-600):not(.bg-red-500):not(.bg-red-700) {
+  color: var(--color-text) !important;
+}
+
+.light button.bg-neutral-800,
+.light button.bg-neutral-900 {
+  background-color: var(--color-bg-hover) !important;
+  color: var(--color-text) !important;
+}
+
+/* ===== HOVER STATES ===== */
+.light .hover\:bg-neutral-800:hover,
+.light .hover\:bg-neutral-900:hover {
+  background-color: var(--color-bg-hover) !important;
+}
+
+.light .hover\:bg-neutral-700:hover {
+  background-color: #e5e5e5 !important;
+}
+
+.light .hover\:text-white:hover {
+  color: var(--color-text) !important;
+}
+
+.light .hover\:text-neutral-300:hover {
+  color: var(--color-text) !important;
+}
+
+.light .hover\:border-neutral-700:hover {
+  border-color: #d4d4d4 !important;
+}
+
+/* ===== BACKDROP AND OVERLAYS ===== */
+.light .backdrop-blur-sm,
+.light .backdrop-blur-md,
+.light .backdrop-blur-lg {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ===== SPECIFIC COMPONENT OVERRIDES ===== */
+/* Modals and dropdowns */
+.light [role="dialog"],
+.light [role="menu"],
+.light [role="listbox"] {
+  background-color: var(--color-bg-card) !important;
+  color: var(--color-text) !important;
+}
+
+/* Cards and containers */
+.light .card,
+.light [class*="card"],
+.light [class*="container"] {
+  background-color: var(--color-bg-card) !important;
+}
+
+/* Links */
+.light a:not(.text-red-500):not(.text-red-600) {
+  color: var(--color-text) !important;
+}
+
+.light a:hover:not(.text-red-500):not(.text-red-600) {
+  color: var(--color-primary) !important;
+}
+
+/* Dividers */
+.light hr,
+.light [class*="divider"],
+.light [class*="border-t"],
+.light [class*="border-b"] {
+  border-color: var(--color-border) !important;
+}
+
+/* Shadows - lighter in light mode */
+.light [class*="shadow"] {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Scrollbar already handled above */
+
+/* ===== ADDITIONAL AGGRESSIVE OVERRIDES ===== */
+/* Target all elements with specific dark classes */
+.light [class*="bg-neutral-900"],
+.light [class*="bg-neutral-800"],
+.light [class*="bg-neutral-700"] {
+  background-color: var(--color-bg-card) !important;
+}
+
+.light [class*="text-white"]:not([class*="text-red"]):not([class*="text-green"]):not([class*="text-blue"]) {
+  color: var(--color-text) !important;
+}
+
+.light [class*="text-neutral-500"],
+.light [class*="text-neutral-400"] {
+  color: var(--color-text-muted) !important;
+}
+
+.light [class*="border-neutral-800"],
+.light [class*="border-neutral-700"] {
+  border-color: var(--color-border) !important;
+}
+
+/* Override backdrop blur backgrounds */
+.light [class*="backdrop-blur"] {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Override white/opacity backgrounds */
+.light [class*="bg-white/10"] {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.light [class*="bg-white/20"] {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.light [class*="text-white/70"],
+.light [class*="text-white/80"] {
+  color: var(--color-text) !important;
+  opacity: 0.8 !important;
+}
+
+/* Don't force transparent on containers - let them use their own backgrounds */
+
+/* Specific component fixes */
+.light .bg-neutral-900\/90 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.light .bg-neutral-800\/90 {
+  background-color: rgba(240, 240, 240, 0.9) !important;
+}
+
+/* Ensure all text in light mode is readable */
+.light p,
+.light span,
+.light div,
+.light h1,
+.light h2,
+.light h3,
+.light h4,
+.light h5,
+.light h6 {
+  color: inherit !important;
+}
+
+/* Override any remaining dark backgrounds */
+.light [style*="background-color: rgb(10, 10, 10)"],
+.light [style*="background-color: #0a0a0a"],
+.light [style*="background-color: rgb(20, 20, 20)"],
+.light [style*="background-color: #141414"] {
+  background-color: var(--color-bg-card) !important;
+}
+
+/* ===== ULTRA-AGGRESSIVE OVERRIDES FOR SPECIFIC PATTERNS ===== */
+/* Catch all bg-neutral variations */
+.light [class*="bg-neutral-900"]:not([class*="bg-red"]):not([class*="bg-green"]):not([class*="bg-blue"]) {
+  background-color: var(--color-bg-card) !important;
+}
+
+.light [class*="bg-neutral-800"]:not([class*="bg-red"]):not([class*="bg-green"]):not([class*="bg-blue"]) {
+  background-color: var(--color-bg-hover) !important;
+}
+
+/* Catch all text-white that should be dark in light mode */
+.light [class*="text-white"]:not([class*="text-red"]):not([class*="text-green"]):not([class*="text-blue"]):not([class*="text-yellow"]):not([class*="text-emerald"]) {
+  color: var(--color-text) !important;
+}
+
+/* Modal and overlay fixes */
+.light .fixed.inset-0[class*="bg-black"] {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* List column specific */
+.light [class*="ListColumn"],
+.light [class*="list-column"] {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Card modal specific */
+.light [class*="CardModal"],
+.light [class*="card-modal"] {
+  background-color: var(--color-bg-card) !important;
+}
+
+/* Ensure dropdowns and menus are light */
+.light [role="menu"],
+.light [role="listbox"],
+.light [class*="dropdown"],
+.light [class*="menu"] {
+  background-color: var(--color-bg-card) !important;
+  color: var(--color-text) !important;
   border-color: var(--color-border) !important;
 }
 
@@ -153,11 +456,39 @@
 }
 
 /* ===== GLOBAL STYLES ===== */
+html {
+  background-color: var(--color-bg) !important;
+  min-height: 100vh;
+}
+
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#root {
+  background-color: var(--color-bg) !important;
+  color: var(--color-text) !important;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure main containers have background */
+.dark html,
+.dark body,
+.dark #root {
+  background-color: #0a0a0a !important;
+}
+
+.light html,
+.light body,
+.light #root {
+  background-color: #f5f5f5 !important;
 }
 
 /* Smooth page transitions */

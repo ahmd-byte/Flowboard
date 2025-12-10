@@ -9,6 +9,19 @@ __pycache__/
 .Python
 
 # =========================
+# Python Files (Hide from commit)
+# =========================
+# Exclude Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Exclude entire backend folder (hide all Python backend code)
+
+
+# =========================
 # Environment Variables
 # =========================
 .env

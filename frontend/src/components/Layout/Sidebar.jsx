@@ -9,7 +9,7 @@ const NavLink = ({ to, icon: Icon, label, isActive, onClick }) => (
     className={`flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 group ${
       isActive 
         ? 'bg-red-600 text-white shadow-lg shadow-red-600/30' 
-        : 'text-neutral-400 hover:bg-neutral-800 hover:text-white'
+        : 'text-neutral-400 dark:text-neutral-400 light:text-gray-600 hover:bg-neutral-800 dark:hover:bg-neutral-800 light:hover:bg-gray-100 hover:text-white dark:hover:text-white light:hover:text-gray-900'
     }`}
   >
     <Icon size={20} className={`transition-transform duration-300 ${isActive ? '' : 'group-hover:scale-110'}`} />
@@ -51,7 +51,7 @@ const Sidebar = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsMobileOpen(true)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-neutral-900 border border-neutral-800 rounded-xl text-white"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-neutral-900 dark:bg-neutral-900 light:bg-white border border-neutral-800 dark:border-neutral-800 light:border-gray-200 rounded-xl text-white dark:text-white light:text-gray-900"
       >
         <Menu size={24} />
       </button>
@@ -66,7 +66,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div className={`
-        w-64 bg-[#0a0a0a] text-white h-screen flex flex-col fixed left-0 top-0 border-r border-neutral-800 z-50
+        w-64 bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-white text-white dark:text-white light:text-gray-900 h-screen flex flex-col fixed left-0 top-0 border-r border-neutral-800 dark:border-neutral-800 light:border-gray-200 z-50
         transition-transform duration-300 ease-in-out
         ${isMobile ? (isMobileOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
       `}>
@@ -77,7 +77,7 @@ const Sidebar = () => {
             <Flame size={24} className="text-white" />
           </div>
           <div>
-            <span className="text-xl font-bold text-white">
+            <span className="text-xl font-bold text-white dark:text-white light:text-gray-900">
               Flowboard
             </span>
             <div className="text-[10px] text-red-500 font-medium tracking-wider">KANBAN POWER</div>
@@ -96,19 +96,19 @@ const Sidebar = () => {
       
       {/* Main Navigation */}
       <div className="flex-1 px-4 space-y-1 mt-4">
-        <div className="text-[10px] uppercase text-neutral-600 font-bold px-3 mb-3 tracking-wider">Navigation</div>
+        <div className="text-[10px] uppercase text-neutral-600 dark:text-neutral-600 light:text-gray-500 font-bold px-3 mb-3 tracking-wider">Navigation</div>
         <NavLink to="/" icon={LayoutDashboard} label="Dashboard" isActive={isActive('/')} onClick={closeMobile} />
         <NavLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} onClick={closeMobile} />
       </div>
       
       {/* Bottom Section */}
-      <div className="p-4 space-y-1 border-t border-neutral-800">
+      <div className="p-4 space-y-1 border-t border-neutral-800 dark:border-neutral-800 light:border-gray-200">
         <NavLink to="/settings" icon={Settings} label="Settings" isActive={isActive('/settings')} onClick={closeMobile} />
         <a 
           href="https://github.com" 
           target="_blank" 
           rel="noopener noreferrer"
-          className="flex items-center space-x-3 p-3 text-neutral-500 hover:bg-neutral-800 hover:text-white rounded-xl transition-all duration-300"
+          className="flex items-center space-x-3 p-3 text-neutral-500 dark:text-neutral-500 light:text-gray-600 hover:bg-neutral-800 dark:hover:bg-neutral-800 light:hover:bg-gray-100 hover:text-white dark:hover:text-white light:hover:text-gray-900 rounded-xl transition-all duration-300"
         >
           <HelpCircle size={20} />
           <span className="font-medium">Help</span>
@@ -116,12 +116,12 @@ const Sidebar = () => {
       </div>
       
       {/* Version */}
-      <div className="px-6 py-4 border-t border-neutral-800">
+      <div className="px-6 py-4 border-t border-neutral-800 dark:border-neutral-800 light:border-gray-200">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-neutral-600">v1.0.0</span>
+          <span className="text-xs text-neutral-600 dark:text-neutral-600 light:text-gray-500">v1.0.0</span>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-            <span className="text-xs text-neutral-500">Online</span>
+            <span className="text-xs text-neutral-500 dark:text-neutral-500 light:text-gray-600">Online</span>
           </div>
         </div>
       </div>

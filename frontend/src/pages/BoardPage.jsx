@@ -37,16 +37,16 @@ const BoardPage = () => {
 
   // Minimal top bar for board view
   const BoardTopbar = () => (
-    <div className="h-14 bg-black/40 backdrop-blur-md text-white flex items-center justify-between px-4 border-b border-white/10 shrink-0">
+    <div className="h-14 bg-black/40 dark:bg-black/40 light:bg-white/80 backdrop-blur-md text-white dark:text-white light:text-gray-900 flex items-center justify-between px-4 border-b border-white/10 dark:border-white/10 light:border-gray-200 shrink-0">
       <div className="flex items-center gap-3">
         <button 
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-colors text-sm"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-gray-100 transition-colors text-sm"
         >
           <ArrowLeft size={18} />
           <span className="hidden sm:inline">Back</span>
         </button>
-        <div className="h-5 w-px bg-white/20" />
+        <div className="h-5 w-px bg-white/20 dark:bg-white/20 light:bg-gray-300" />
         <h1 className="font-bold text-lg truncate max-w-[300px]">
           {board?.title || 'Loading...'}
         </h1>
@@ -55,13 +55,13 @@ const BoardPage = () => {
       <div className="flex items-center gap-2">
         <button 
           onClick={() => navigate('/')}
-          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+          className="p-2 rounded-lg hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-gray-100 transition-colors"
           title="Dashboard"
         >
           <Home size={18} />
         </button>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-lg">
-          <div className="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center text-xs font-bold">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 dark:bg-white/10 light:bg-gray-100 rounded-lg">
+          <div className="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center text-xs font-bold text-white">
             {user?.name?.[0]?.toUpperCase() || 'U'}
           </div>
           <span className="text-sm hidden sm:inline">{user?.name}</span>
@@ -72,13 +72,13 @@ const BoardPage = () => {
 
   if (loading) {
     return (
-      <div className="flex h-screen bg-[#0a0a0a]">
+      <div className="flex h-screen bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-gray-50">
         <div className="flex-1 flex flex-col">
           <BoardTopbar />
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <Loader className="animate-spin text-red-500 mx-auto mb-4" size={48} />
-              <p className="text-neutral-400">Loading board...</p>
+              <p className="text-neutral-400 dark:text-neutral-400 light:text-gray-600">Loading board...</p>
             </div>
           </div>
         </div>
@@ -88,7 +88,7 @@ const BoardPage = () => {
 
   if (error) {
     return (
-      <div className="flex h-screen bg-[#0a0a0a]">
+      <div className="flex h-screen bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-gray-50">
         <div className="flex-1 flex flex-col">
           <BoardTopbar />
           <div className="flex-1 flex items-center justify-center">
@@ -108,7 +108,7 @@ const BoardPage = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[#0a0a0a] overflow-hidden">
+    <div className="flex h-screen bg-[#0a0a0a] dark:bg-[#0a0a0a] light:bg-gray-50 overflow-hidden">
       <div className="flex-1 flex flex-col">
         <BoardTopbar />
         <div className="flex-1 overflow-hidden">
