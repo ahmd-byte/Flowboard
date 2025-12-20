@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1 import auth, users, boards, lists, cards, comments, roles, automations, stats
@@ -49,7 +49,12 @@ def health_check():
 
 
 @app.websocket("/ws/boards/{board_id}")
-async def websocket_endpoint(websocket: WebSocket, board_id: int, user_id: int = 0, user_name: str = "Guest"):
+async def websocket_endpoint(
+    websocket: WebSocket, 
+    board_id: int, 
+    user_id: int = Query(0), 
+    user_name: str = Query("Guest")
+):
     await ws_manager.connect(websocket, board_id, user_id, user_name)
     try:
         while True:
