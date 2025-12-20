@@ -16,7 +16,7 @@ export const useWebSocket = (boardId) => {
   const connect = useCallback(() => {
     if (!boardId || !user) return;
 
-    const wsUrl = `${WS_BASE_URL}/ws/boards/${boardId}?user_id=${user.id}&user_name=${encodeURIComponent(user.full_name || user.email)}`;
+    const wsUrl = `${WS_BASE_URL}/ws/boards/${boardId}?user_id=${user.id}&user_name=${encodeURIComponent(user.name || user.email)}`;
     
     try {
       wsRef.current = new WebSocket(wsUrl);
