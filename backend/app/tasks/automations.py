@@ -172,7 +172,8 @@ def execute_send_notification(db, trigger_data: dict, config: dict):
     trigger_user = db.query(User).filter(User.id == trigger_user_id).first() if trigger_user_id else None
     
     emails_sent = 0
-    board_url = f"http://localhost:5173/board/{board.id}"  # TODO: Get from config
+    from app.core.config import settings
+    board_url = f"{settings.FRONTEND_URL}/board/{board.id}"
     
     for member in members:
         if member.email and member.id != trigger_user_id:  # Don't notify the person who triggered

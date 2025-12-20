@@ -555,10 +555,6 @@ Once the backend is running, visit:
 - ✅ Onboarding tour
 - ✅ Undo/redo functionality
 
-### 🔄 In Progress
-
-- None currently - All planned features for current version are complete
-
 ### 📝 Known Issues
 
 - None currently reported

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import toast from 'react-hot-toast';
 import CardItem from './CardItem';
@@ -6,7 +6,33 @@ import useBoardStore from '../../store/boardStore';
 import { cardApi, listApi } from '../../api/services';
 import { MoreHorizontal, Plus, X, Trash2, GripVertical } from 'lucide-react';
 
-const ListColumn = ({ list, cards, index, onRefresh }) => {
+/**
+ * List column component for displaying a list with its cards.
+ * 
+ * Features:
+ * - Drag and drop for both list and cards
+ * - Inline list title editing
+ * - Add/delete cards
+ * - Delete list functionality
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.list - List data object
+ * @param {string|number} props.list.id - List ID
+ * @param {string} props.list.title - List title
+ * @param {number} props.list.position - List position in board
+ * @param {Array} props.cards - Array of card objects to display
+ * @param {number} props.index - Index of list in board (for drag and drop)
+ * @param {Function} props.onRefresh - Callback to refresh board data
+ * 
+ * @example
+ * <ListColumn 
+ *   list={{ id: 1, title: "To Do", position: 0 }}
+ *   cards={[{ id: 1, title: "Task" }]}
+ *   index={0}
+ *   onRefresh={() => console.log("Refresh")}
+ * />
+ */
+const ListColumn = memo(({ list, cards, index, onRefresh }) => {
   const [showAddCard, setShowAddCard] = useState(false);
   const [newCardTitle, setNewCardTitle] = useState('');
   const [addingCard, setAddingCard] = useState(false);
@@ -210,6 +236,8 @@ const ListColumn = ({ list, cards, index, onRefresh }) => {
       )}
     </Draggable>
   );
-};
+});
+
+ListColumn.displayName = 'ListColumn';
 
 export default ListColumn;

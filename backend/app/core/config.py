@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     ENVIRONMENT: str = "development"
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+    FRONTEND_URL: str = "http://localhost:5173"  # Frontend URL for email links
     
     @property
     def database_url(self) -> str:

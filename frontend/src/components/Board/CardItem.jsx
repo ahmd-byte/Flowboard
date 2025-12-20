@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { Clock, AlignLeft, AlertCircle, Bug, Sparkles, Zap, CheckCircle } from 'lucide-react';
 import CardModal from './CardModal';
 
-// Label definitions (shared with CardModal)
+/**
+ * Label configuration for card labels.
+ * Defines available label types with their colors and icons.
+ */
 const LABEL_CONFIG = {
   'urgent': { name: 'Urgent', color: 'bg-red-500', icon: AlertCircle },
   'bug': { name: 'Bug', color: 'bg-orange-500', icon: Bug },
@@ -13,7 +16,33 @@ const LABEL_CONFIG = {
   'in-progress': { name: 'In Progress', color: 'bg-amber-500', icon: Clock },
 };
 
-const CardItem = ({ card, index, onRefresh }) => {
+/**
+ * Card item component for displaying a card in a list.
+ * 
+ * Features:
+ * - Drag and drop support
+ * - Label display
+ * - Due date status indicators
+ * - Click to open card modal
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.card - Card data object
+ * @param {string|number} props.card.id - Card ID
+ * @param {string} props.card.title - Card title
+ * @param {string} props.card.description - Card description (optional)
+ * @param {string|Array} props.card.labels - Card labels (JSON string or array)
+ * @param {string} props.card.due_date - Due date in ISO format (optional)
+ * @param {number} props.index - Index of card in the list (for drag and drop)
+ * @param {Function} props.onRefresh - Callback to refresh card data
+ * 
+ * @example
+ * <CardItem 
+ *   card={{ id: 1, title: "Task", labels: ["urgent"], due_date: "2024-01-01" }}
+ *   index={0}
+ *   onRefresh={() => console.log("Refresh")}
+ * />
+ */
+const CardItem = memo(({ card, index, onRefresh }) => {
   const [showModal, setShowModal] = useState(false);
 
   // Parse labels from card
@@ -117,6 +146,8 @@ const CardItem = ({ card, index, onRefresh }) => {
       />
     </>
   );
-};
+});
+
+CardItem.displayName = 'CardItem';
 
 export default CardItem;

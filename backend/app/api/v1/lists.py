@@ -2,32 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List as PyList
 from app.db.session import get_db
-from app.db.models import User, Board, List, Role, RoleType
+from app.db.models import User, List
 from app.schemas.list import ListCreate, ListUpdate, ListResponse
 from app.core.jwt import get_current_user
+from app.services.permissions import check_board_access
 
 router = APIRouter(prefix="/lists", tags=["Lists"])
-
-
-def check_board_access(db: Session, board_id: int, user_id: int, require_edit: bool = False):
-    board = db.query(Board).filter(Board.id == board_id).first()
-    if not board:
-        raise HTTPException(status_code=404, detail="Board not found")
-    
-    role = db.query(Role).filter(
-        Role.board_id == board_id,
-        Role.user_id == user_id
-    ).first()
-    
-    is_owner = board.workspace.owner_id == user_id
-    
-    if not role and not is_owner:
-        raise HTTPException(status_code=403, detail="Access denied")
-    
-    if require_edit and role and role.role == RoleType.VIEWER:
-        raise HTTPException(status_code=403, detail="Edit permission required")
-    
-    return board
 
 
 @router.get("/board/{board_id}", response_model=PyList[ListResponse])
@@ -36,6 +16,12 @@ def get_lists(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Get all lists for a board.
+    
+    Requires access to the board (any role or workspace owner).
+    Lists are returned ordered by position.
+    """
     check_board_access(db, board_id, current_user.id)
     lists = db.query(List).filter(List.board_id == board_id).order_by(List.position).all()
     return lists
@@ -47,6 +33,12 @@ def create_list(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Create a new list in a board.
+    
+    Requires EDITOR or ADMIN role on the board.
+    The new list is automatically positioned at the end.
+    """
     check_board_access(db, list_data.board_id, current_user.id, require_edit=True)
     
     # Get max position
@@ -67,6 +59,11 @@ def update_list(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Update a list.
+    
+    Requires EDITOR or ADMIN role on the board.
+    """
     list_item = db.query(List).filter(List.id == list_id).first()
     if not list_item:
         raise HTTPException(status_code=404, detail="List not found")
@@ -88,6 +85,12 @@ def update_list_position(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Update the position of a list within a board.
+    
+    Requires EDITOR or ADMIN role on the board.
+    Automatically reorders other lists to maintain sequential positions.
+    """
     list_item = db.query(List).filter(List.id == list_id).first()
     if not list_item:
         raise HTTPException(status_code=404, detail="List not found")
@@ -122,6 +125,12 @@ def delete_list(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Delete a list and all its cards.
+    
+    Requires EDITOR or ADMIN role on the board.
+    This action cannot be undone.
+    """
     list_item = db.query(List).filter(List.id == list_id).first()
     if not list_item:
         raise HTTPException(status_code=404, detail="List not found")

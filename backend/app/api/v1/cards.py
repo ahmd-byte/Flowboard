@@ -2,34 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List as PyList
 from app.db.session import get_db
-from app.db.models import User, Card, List, Role, RoleType
+from app.db.models import User, Card, List
 from app.schemas.card import CardCreate, CardUpdate, CardMove, CardResponse
 from app.core.jwt import get_current_user
 from app.tasks.notifications import notify_card_created_sync, notify_card_moved_sync
+from app.services.permissions import check_list_access
 
 router = APIRouter(prefix="/cards", tags=["Cards"])
-
-
-def check_list_access(db: Session, list_id: int, user_id: int, require_edit: bool = False):
-    list_item = db.query(List).filter(List.id == list_id).first()
-    if not list_item:
-        raise HTTPException(status_code=404, detail="List not found")
-    
-    board = list_item.board
-    role = db.query(Role).filter(
-        Role.board_id == board.id,
-        Role.user_id == user_id
-    ).first()
-    
-    is_owner = board.workspace.owner_id == user_id
-    
-    if not role and not is_owner:
-        raise HTTPException(status_code=403, detail="Access denied")
-    
-    if require_edit and role and role.role == RoleType.VIEWER:
-        raise HTTPException(status_code=403, detail="Edit permission required")
-    
-    return list_item
 
 
 @router.get("/list/{list_id}", response_model=PyList[CardResponse])
@@ -38,6 +17,11 @@ def get_cards(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Get all cards in a list.
+    
+    Requires access to the board containing the list.
+    """
     check_list_access(db, list_id, current_user.id)
     cards = db.query(Card).filter(Card.list_id == list_id).order_by(Card.position).all()
     return cards
@@ -50,6 +34,12 @@ def create_card(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Create a new card in a list.
+    
+    Requires EDITOR or ADMIN role on the board.
+    Sends notification to board members asynchronously.
+    """
     check_list_access(db, card_data.list_id, current_user.id, require_edit=True)
     
     # Get max position
@@ -73,6 +63,11 @@ def get_card(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Get a specific card by ID.
+    
+    Requires access to the board containing the card.
+    """
     card = db.query(Card).filter(Card.id == card_id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Card not found")
@@ -88,6 +83,11 @@ def update_card(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Update a card.
+    
+    Requires EDITOR or ADMIN role on the board.
+    """
     card = db.query(Card).filter(Card.id == card_id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Card not found")
@@ -110,6 +110,12 @@ def move_card(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Move a card to a different list or position.
+    
+    Requires EDITOR or ADMIN role on both source and destination boards.
+    Sends notification if card is moved to a different list.
+    """
     card = db.query(Card).filter(Card.id == card_id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Card not found")
@@ -164,6 +170,11 @@ def delete_card(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Delete a card.
+    
+    Requires EDITOR or ADMIN role on the board.
+    """
     card = db.query(Card).filter(Card.id == card_id).first()
     if not card:
         raise HTTPException(status_code=404, detail="Card not found")

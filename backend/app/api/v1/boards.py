@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 from pydantic import BaseModel
 from app.db.session import get_db
 from app.db.models import User, Board, Workspace, Role, RoleType, List as ListModel, Card
 from app.schemas.board import BoardCreate, BoardUpdate, BoardResponse
 from app.core.jwt import get_current_user
+from app.services.permissions import check_board_access
 
 router = APIRouter(prefix="/boards", tags=["Boards"])
 
@@ -30,6 +31,13 @@ def get_boards(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    """
+    Get all boards accessible to the current user.
+    
+    Returns boards where the user:
+    - Is the workspace owner, OR
+    - Has a role (ADMIN, EDITOR, or VIEWER)
+    """
     # Get boards where user has a role or is workspace owner
     boards = db.query(Board).join(Workspace).filter(
         (Workspace.owner_id == current_user.id) |
@@ -84,25 +92,12 @@ def get_board(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    board = db.query(Board).filter(Board.id == board_id).first()
-    if not board:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Board not found"
-        )
+    """
+    Get a specific board by ID.
     
-    # Check access
-    has_access = db.query(Role).filter(
-        Role.board_id == board_id,
-        Role.user_id == current_user.id
-    ).first() or board.workspace.owner_id == current_user.id
-    
-    if not has_access:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have access to this board"
-        )
-    
+    Requires the user to have access to the board (any role or workspace owner).
+    """
+    board = check_board_access(db, board_id, current_user.id)
     return board
 
 
@@ -112,24 +107,33 @@ def get_board_full(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Get board with all lists and cards"""
-    board = db.query(Board).filter(Board.id == board_id).first()
-    if not board:
-        raise HTTPException(status_code=404, detail="Board not found")
+    """
+    Get board with all lists and cards in a single optimized query.
     
+    Uses eager loading to avoid N+1 query problems.
+    """
     # Check access
-    has_access = db.query(Role).filter(
-        Role.board_id == board_id,
-        Role.user_id == current_user.id
-    ).first() or board.workspace.owner_id == current_user.id
+    board = check_board_access(db, board_id, current_user.id)
     
-    if not has_access:
-        raise HTTPException(status_code=403, detail="Access denied")
-    
-    # Get lists with cards
+    # Optimize: Use eager loading to fetch lists and cards in fewer queries
     lists = db.query(ListModel).filter(
         ListModel.board_id == board_id
     ).order_by(ListModel.position).all()
+    
+    # Get all card IDs for this board
+    list_ids = [lst.id for lst in lists]
+    
+    # Fetch all cards in a single query
+    cards = db.query(Card).filter(
+        Card.list_id.in_(list_ids)
+    ).order_by(Card.list_id, Card.position).all()
+    
+    # Organize cards by list_id for efficient lookup
+    cards_by_list = {}
+    for card in cards:
+        if card.list_id not in cards_by_list:
+            cards_by_list[card.list_id] = []
+        cards_by_list[card.list_id].append(card)
     
     lists_data = []
     cards_data = {}
@@ -137,12 +141,10 @@ def get_board_full(
     
     for lst in lists:
         list_order.append(str(lst.id))
-        cards = db.query(Card).filter(
-            Card.list_id == lst.id
-        ).order_by(Card.position).all()
+        list_cards = cards_by_list.get(lst.id, [])
         
         card_ids = []
-        for card in cards:
+        for card in list_cards:
             card_ids.append(str(card.id))
             cards_data[str(card.id)] = {
                 "id": str(card.id),
@@ -183,25 +185,12 @@ def update_board(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    board = db.query(Board).filter(Board.id == board_id).first()
-    if not board:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Board not found"
-        )
+    """
+    Update a board.
     
-    # Check admin/editor access
-    role = db.query(Role).filter(
-        Role.board_id == board_id,
-        Role.user_id == current_user.id,
-        Role.role.in_([RoleType.ADMIN, RoleType.EDITOR])
-    ).first()
-    
-    if not role and board.workspace.owner_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to edit this board"
-        )
+    Requires EDITOR or ADMIN role, or workspace ownership.
+    """
+    board = check_board_access(db, board_id, current_user.id, require_edit=True)
     
     for key, value in board_data.model_dump(exclude_unset=True).items():
         setattr(board, key, value)
@@ -217,25 +206,12 @@ def delete_board(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    board = db.query(Board).filter(Board.id == board_id).first()
-    if not board:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Board not found"
-        )
+    """
+    Delete a board.
     
-    # Only admin or workspace owner can delete
-    role = db.query(Role).filter(
-        Role.board_id == board_id,
-        Role.user_id == current_user.id,
-        Role.role == RoleType.ADMIN
-    ).first()
-    
-    if not role and board.workspace.owner_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to delete this board"
-        )
+    Requires ADMIN role or workspace ownership.
+    """
+    board = check_board_access(db, board_id, current_user.id, require_admin=True)
     
     db.delete(board)
     db.commit()
