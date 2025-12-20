@@ -11,7 +11,7 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=flat-square&logo=mysql)](https://www.mysql.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 
-[Features](#-features) • [Installation](#-installation) • [Documentation](#-api-documentation) • [Roadmap](#-roadmap)
+[Features](#features) • [Installation](#installation) • [Documentation](#api-documentation) • [Roadmap](#roadmap--future-features)
 
 </div>
 
@@ -148,7 +148,7 @@ Flowboard is a modern, feature-rich Kanban board application inspired by Trello,
    ```env
    # Database
    DB_HOST=localhost
-   DB_PORT=4000
+   DB_PORT=3306  # Standard MySQL port (use 4000 if using TiDB)
    DB_USER=your_username
    DB_PASSWORD=your_password
    DB_NAME=flowboard
@@ -160,7 +160,7 @@ Flowboard is a modern, feature-rich Kanban board application inspired by Trello,
    REFRESH_TOKEN_EXPIRE_DAYS=7
    
    # CORS
-   CORS_ORIGINS=http://localhost:5173,http://localhost:5174
+   CORS_ORIGINS=http://localhost:5173  # Frontend dev server port
    
    # Redis (Optional - for Celery)
    REDIS_URL=redis://localhost:6379/0
@@ -236,7 +236,7 @@ To enable email notifications and scheduled tasks:
 
 ## 📁 Project Structure
 
-```
+```text
 Flowboard/
 ├── backend/
 │   ├── app/
@@ -345,8 +345,8 @@ Flowboard/
 
 Once the backend is running, visit:
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
 ### Main API Endpoints
 
@@ -395,7 +395,7 @@ Once the backend is running, visit:
 
 ### System Architecture
 
-```
+```text
 ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
 │   React     │◄────►│   FastAPI    │◄────►│    MySQL    │
 │  Frontend   │ HTTP │   Backend    │ SQL  │  Database   │
@@ -573,7 +573,7 @@ We welcome contributions! Here's how you can help:
 
 1. **Fork the repository**
 2. **Create a feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit your changes** (`git commit -m 'Add some amazing feature'`)
+3. **Commit your changes** (`git commit -m 'Add innovative feature'`)
 4. **Push to the branch** (`git push origin feature/amazing-feature`)
 5. **Open a Pull Request**
 
@@ -603,9 +603,9 @@ We welcome contributions! Here's how you can help:
 
 ## 📧 Support & Contact
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/flowboard/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/flowboard/discussions)
-- **Email**: support@flowboard.com
+- **Issues**: [GitHub Issues](https://github.com/ahmd-byte/Flowboard/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ahmd-byte/Flowboard/discussions)
+- **Email**: [support@flowboard.com](mailto:support@flowboard.com)
 
 ---
 

@@ -135,3 +135,9 @@ backend/alembic/versions/__pycache__/
 # Frontend
 frontend/.eslintcache
 frontend/coverage/
+
+# Scripts and Quick Start Guides
+start-all.bat
+start-backend.bat
+start-frontend.bat
+START_HERE.md

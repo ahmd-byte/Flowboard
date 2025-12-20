@@ -9,14 +9,22 @@ export const useWebSocket = (boardId) => {
   const [cursors, setCursors] = useState({});
   const wsRef = useRef(null);
   const reconnectTimeoutRef = useRef(null);
-  const { user } = useUserStore();
+  const reconnectAttemptsRef = useRef(0);
+  const isMountedRef = useRef(true);
+  const MAX_RECONNECT_ATTEMPTS = 10;
+  const BASE_DELAY = 1000;
+  
+  // Use selector to avoid unnecessary reconnections due to object reference changes
+  const user = useUserStore(state => state.user);
+  const userId = user?.id;
+  const userName = user?.name || user?.email;
   
   const messageHandlers = useRef({});
 
   const connect = useCallback(() => {
-    if (!boardId || !user) return;
+    if (!boardId || !userId) return;
 
-    const wsUrl = `${WS_BASE_URL}/ws/boards/${boardId}?user_id=${user.id}&user_name=${encodeURIComponent(user.name || user.email)}`;
+    const wsUrl = `${WS_BASE_URL}/ws/boards/${boardId}?user_id=${userId}&user_name=${encodeURIComponent(userName)}`;
     
     try {
       wsRef.current = new WebSocket(wsUrl);
@@ -24,15 +32,22 @@ export const useWebSocket = (boardId) => {
       wsRef.current.onopen = () => {
         console.log('WebSocket connected');
         setIsConnected(true);
+        reconnectAttemptsRef.current = 0; // Reset on successful connection
       };
 
       wsRef.current.onclose = () => {
         console.log('WebSocket disconnected');
         setIsConnected(false);
-        // Attempt to reconnect after 3 seconds
-        reconnectTimeoutRef.current = setTimeout(() => {
-          connect();
-        }, 3000);
+        // Exponential backoff with max attempts
+        if (isMountedRef.current && reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
+          const delay = Math.min(BASE_DELAY * Math.pow(2, reconnectAttemptsRef.current), 30000);
+          reconnectAttemptsRef.current++;
+          reconnectTimeoutRef.current = setTimeout(() => {
+            connect();
+          }, delay);
+        } else if (reconnectAttemptsRef.current >= MAX_RECONNECT_ATTEMPTS) {
+          console.error('Max reconnection attempts reached');
+        }
       };
 
       wsRef.current.onerror = (error) => {
@@ -50,7 +65,7 @@ export const useWebSocket = (boardId) => {
     } catch (error) {
       console.error('Failed to create WebSocket:', error);
     }
-  }, [boardId, user]);
+  }, [boardId, userId, userName]);
 
   const handleMessage = useCallback((message) => {
     const { type, payload } = message;
@@ -114,6 +129,7 @@ export const useWebSocket = (boardId) => {
     connect();
 
     return () => {
+      isMountedRef.current = false;
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }

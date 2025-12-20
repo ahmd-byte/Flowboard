@@ -1,4 +1,5 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, Query
+import json
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1 import auth, users, boards, lists, cards, comments, roles, automations, stats
@@ -11,7 +12,8 @@ app = FastAPI(
 )
 
 # CORS - Allow all localhost ports in development
-origins = settings.cors_origins_list + [
+origins = [
+    *settings.cors_origins_list,
     "http://localhost:5174",
     "http://localhost:5175",
     "http://127.0.0.1:5173",
@@ -52,15 +54,18 @@ def health_check():
 async def websocket_endpoint(
     websocket: WebSocket, 
     board_id: int, 
-    user_id: int = Query(0), 
-    user_name: str = Query("Guest")
+    user_id: int = Query(...),  # Required - enforce authentication
+    user_name: str = Query(...)
 ):
+    # TODO: Add proper JWT token validation and board access check
     await ws_manager.connect(websocket, board_id, user_id, user_name)
     try:
         while True:
             data = await websocket.receive_text()
-            import json
-            message = json.loads(data)
+            try:
+                message = json.loads(data)
+            except json.JSONDecodeError:
+                continue  # Ignore malformed messages
             
             # Handle cursor movement
             if message.get("type") == "cursor_move":
