@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0"
 echo ========================================
 echo   Flowboard - Starting All Services
 echo ========================================
@@ -13,9 +14,9 @@ echo.
 echo Close both windows to stop all services.
 echo.
 
-start "Flowboard Backend" cmd /k "start-backend.bat"
+start "Flowboard Backend" cmd /k "%~dp0start-backend.bat"
 timeout /t 3 /nobreak >nul
-start "Flowboard Frontend" cmd /k "start-frontend.bat"
+start "Flowboard Frontend" cmd /k "%~dp0start-frontend.bat"
 
 echo.
 echo Both servers are starting...
